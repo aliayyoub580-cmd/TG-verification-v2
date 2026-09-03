@@ -16,7 +16,7 @@ async function requireAdmin(req, res, next) {
 
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, process.env.JWT_SECRET || 'indufar-qr-super-secret-jwt-key-2024-production');
     } catch (err) {
       if (err.name === 'TokenExpiredError') {
         return res.status(401).json({ success: false, message: 'Session expired. Please log in again.' });

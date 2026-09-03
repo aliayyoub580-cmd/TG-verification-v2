@@ -30,19 +30,38 @@ app.use(
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  process.env.PUBLIC_VERIFICATION_BASE_URL,
+  'https://tg-verification-v2.vercel.app',
+  'https://tg-verification-xi.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000',
 ].filter(Boolean);
 
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true; // Mobile apps, server-to-server, curl, Postman
+  if (allowedOrigins.includes(origin)) return true;
+
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname;
+    // Allow all Vercel domains (*.vercel.app)
+    if (hostname.endsWith('.vercel.app')) return true;
+    // Allow local development
+    if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
+  } catch (err) {
+    return false;
+  }
+
+  return false;
+};
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, Postman)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
+      if (isAllowedOrigin(origin)) {
         return callback(null, true);
       }
-      callback(new Error(`CORS policy: origin ${origin} is not allowed`));
+      return callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

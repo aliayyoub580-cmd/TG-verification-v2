@@ -39,7 +39,7 @@ async function loginAdmin(email, password) {
   // 3. Issue our own JWT (so the service-role key never leaves the backend)
   const token = jwt.sign(
     { userId, email: authData.user.email },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || 'indufar-qr-super-secret-jwt-key-2024-production',
     { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
   );
 
