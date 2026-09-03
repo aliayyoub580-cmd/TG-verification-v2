@@ -43,6 +43,7 @@ export const authAPI = {
 /* ── Verify (public) ───────────────────────────────────────────────────────── */
 export const verifyAPI = {
   check: (code) => api.get(`/api/verify`, { params: { code } }),
+  verifyPost: (code) => api.post('/api/verify', { code }),
 };
 
 /* ── Dashboard ─────────────────────────────────────────────────────────────── */
@@ -92,7 +93,7 @@ export const qrAPI = {
     });
   },
   history: () => api.get('/api/admin/qr-codes/import-history'),
-  downloadZip: (ids, filters) => api.post('/api/admin/qr-codes/download-zip', { ids, filters }, { responseType: 'blob' }),
+  downloadZip: (ids, filters) => api.post('/api/admin/qr-codes/download-zip', { ids, filters }, { responseType: 'blob', timeout: 0 }),
   downloadPNG: (id) => api.get(`/api/admin/qr-codes/${id}/download`, { responseType: 'blob' }),
 };
 

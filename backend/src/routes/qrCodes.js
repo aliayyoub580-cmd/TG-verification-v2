@@ -8,7 +8,7 @@ const ctrl = require('../controllers/qrCodeController');
 const router = express.Router();
 router.use(requireAdmin);
 const idsSchema = Joi.object({ ids: Joi.array().items(Joi.string().uuid()).min(1).max(20000).required() });
-const zipSchema = Joi.object({ ids: Joi.array().items(Joi.string().uuid()).max(20000).optional(), filters: Joi.object({ search:Joi.string().allow(''), product_id:Joi.string().uuid().allow(''), date_from:Joi.date().iso().allow(''), date_to:Joi.date().iso().allow('') }).optional() }).or('ids','filters');
+const zipSchema = Joi.object({ ids: Joi.array().items(Joi.string().uuid()).max(20000).optional(), filters: Joi.object({ search:Joi.string().allow(''), product_id:Joi.string().uuid().allow(''), date_from:Joi.string().allow(''), date_to:Joi.string().allow('') }).optional() }).or('ids','filters');
 const statusSchema = Joi.object({ ids:Joi.array().items(Joi.string().uuid()).min(1).max(1000).required(),status:Joi.string().valid('active','inactive').required() });
 const updateSchema = Joi.object({ status:Joi.string().valid('active','inactive').optional(),product_id:Joi.string().uuid().optional() });
 
@@ -22,7 +22,7 @@ router.post('/preview-import', uploadCSV.single('file'), ctrl.previewImport);
 router.post('/import', uploadCSV.single('file'), ctrl.importCodes);
 router.post('/download-zip', validateBody(zipSchema), ctrl.downloadZip);
 router.patch('/bulk-status', validateBody(statusSchema), ctrl.bulkStatus);
-router.delete('/bulk-delete', validateBody(Joi.object({ids:Joi.array().items(Joi.string().uuid()).min(1).max(1000).required()})), ctrl.bulkDelete);
+router.delete('/bulk-delete', validateBody(Joi.object({ids:Joi.array().items(Joi.string().uuid()).min(1).max(20000).required()})), ctrl.bulkDelete);
 router.get('/:id/download', ctrl.downloadPNG);
 router.get('/', ctrl.list);
 router.get('/:id', ctrl.getOne);

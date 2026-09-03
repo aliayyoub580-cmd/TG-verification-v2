@@ -161,12 +161,15 @@ async function bulkUpdateStatus(ids, status) {
     throw Object.assign(new Error('Invalid status value'), { statusCode: 400 });
   }
 
-  const { error } = await supabaseAdmin
-    .from('qr_codes')
-    .update({ status, updated_at: new Date().toISOString() })
-    .in('id', ids);
-
-  if (error) throw new Error(`Bulk status update failed: ${error.message}`);
+  const CHUNK_SIZE = 500;
+  for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+    const chunk = ids.slice(i, i + CHUNK_SIZE);
+    const { error } = await supabaseAdmin
+      .from('qr_codes')
+      .update({ status, updated_at: new Date().toISOString() })
+      .in('id', chunk);
+    if (error) throw new Error(`Bulk status update failed: ${error.message}`);
+  }
 
   return { updated: ids.length };
 }
@@ -176,14 +179,18 @@ async function bulkDelete(ids) {
     throw Object.assign(new Error('No IDs provided'), { statusCode: 400 });
   }
 
-  // Remove scan log references first
-  await supabaseAdmin.from('scan_logs').delete().in('qr_code_id', ids);
+  const CHUNK_SIZE = 500;
+  let totalDeleted = 0;
 
-  const { error } = await supabaseAdmin.from('qr_codes').delete().in('id', ids);
+  for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+    const chunk = ids.slice(i, i + CHUNK_SIZE);
+    await supabaseAdmin.from('scan_logs').delete().in('qr_code_id', chunk);
+    const { error } = await supabaseAdmin.from('qr_codes').delete().in('id', chunk);
+    if (error) throw new Error(`Bulk delete failed: ${error.message}`);
+    totalDeleted += chunk.length;
+  }
 
-  if (error) throw new Error(`Bulk delete failed: ${error.message}`);
-
-  return { deleted: ids.length };
+  return { deleted: totalDeleted };
 }
 
 module.exports = {

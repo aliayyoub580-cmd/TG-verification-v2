@@ -2,6 +2,8 @@
  * Database setup script — runs migrations and creates admin user.
  * Run: node scripts/setup-db.js
  */
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 const fs = require('fs');

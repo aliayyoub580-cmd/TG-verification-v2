@@ -14,8 +14,12 @@ async function listPendingCodes(query = {}) {
   const { page, limit, offset } = getPagination(query);
   let q = supabaseAdmin.from('qr_codes').select('id, code, status, imported_at, product_id, products(name)', { count: 'exact' })
     .eq('qr_generated', false).order('imported_at', { ascending: false });
-  if (query.all !== 'true') q = q.range(offset, offset + limit - 1);
-  else q = q.limit(20000);
+  if (query.all === 'true') {
+    const maxFetch = Math.min(20000, Math.max(1, parseInt(query.limit, 10) || 20000));
+    q = q.limit(maxFetch);
+  } else {
+    q = q.range(offset, offset + limit - 1);
+  }
   if (query.search) q = q.ilike('code', `%${query.search.trim()}%`);
   if (query.product_id) q = q.eq('product_id', query.product_id);
   if (query.date_from) q = q.gte('imported_at', `${query.date_from}T00:00:00.000Z`);

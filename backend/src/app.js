@@ -1,3 +1,5 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 require('dotenv').config();
 
 const express = require('express');
@@ -76,7 +78,20 @@ app.use('/api/admin/scans', scansRouter);
 app.use('/api/admin/news', newsRouter);
 app.use('/api/cron', cronRouter);
 
-// ─── 404 handler ─────────────────────────────────────────────────────────────
+// ─── Static files (production / unified mode) ───────────────────────────────
+const fs = require('fs');
+const distPath = path.resolve(__dirname, '../../dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
+// ─── 404 handler for unmatched API routes ─────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.method} ${req.path} not found` });
 });
