@@ -47,15 +47,40 @@ export default function VerifyFlow() {
     setFlowState('popup');
   };
 
+/**
+ * Helper to extract code parameter if raw scan string is a URL
+ */
+function extractVerificationCode(input) {
+  if (!input) return '';
+  let str = String(input).trim();
+  try {
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      const parsed = new URL(str);
+      const paramCode = parsed.searchParams.get('code');
+      if (paramCode) return paramCode.trim();
+    }
+  } catch (e) {}
+
+  const match = str.match(/[?&]code=([^&#\s]+)/i);
+  if (match) {
+    try {
+      return decodeURIComponent(match[1]).trim();
+    } catch (e) {
+      return match[1].trim();
+    }
+  }
+  return str;
+}
+
   // Handler: Code successfully scanned or entered
   const handleScanSuccess = async (rawScannedCode) => {
     if (!rawScannedCode) return;
-    const cleanCode = String(rawScannedCode).trim();
+    const cleanCode = extractVerificationCode(rawScannedCode);
     setScannedCode(cleanCode);
     setIsValidating(true);
 
     try {
-      // Call backend POST /api/verify with { code }
+      // Call backend POST /api/verify with cleanCode
       const res = await verifyAPI.verifyPost(cleanCode);
       const data = res.data;
 

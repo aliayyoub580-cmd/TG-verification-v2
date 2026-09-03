@@ -85,7 +85,27 @@ function parseCSVBuffer(buffer, requiredColumns = []) {
  */
 function normalizeCode(code) {
   if (typeof code !== 'string') return '';
-  return code.trim();
+  let str = code.trim();
+
+  // If input is a URL or path containing ?code= or &code=, extract the code param
+  try {
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      const parsedUrl = new URL(str);
+      const paramCode = parsedUrl.searchParams.get('code');
+      if (paramCode) return paramCode.trim();
+    }
+  } catch (e) {}
+
+  const match = str.match(/[?&]code=([^&#\s]+)/i);
+  if (match) {
+    try {
+      return decodeURIComponent(match[1]).trim();
+    } catch (e) {
+      return match[1].trim();
+    }
+  }
+
+  return str;
 }
 
 function codeLookupKey(code) {

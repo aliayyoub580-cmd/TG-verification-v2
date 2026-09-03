@@ -10,6 +10,11 @@
     <meta name="theme-color" content="#16a34a" />
     <title>Indufar – Product Verification</title>
     <meta name="description" content="Verify the authenticity of your Indufar product." />
+    <script>
+      if (window.location.hostname.includes('tg-verification-xi.vercel.app')) {
+        window.location.replace('https://tg-verification-v2.vercel.app' + window.location.pathname + window.location.search + window.location.hash);
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -71,7 +71,8 @@ export const qrAPI = {
   bulkStatus: (ids, status) => api.patch('/api/admin/qr-codes/bulk-status', { ids, status }),
   bulkDelete: (ids) => api.delete('/api/admin/qr-codes/bulk-delete', { data: { ids } }),
   pending: (params) => api.get('/api/admin/qr-codes/pending', { params }),
-  generate: (ids) => api.post('/api/admin/qr-codes/generate', { ids }),
+  generate: (ids, baseUrl, force = false) =>
+    api.post('/api/admin/qr-codes/generate', { ids, baseUrl, force }),
   export: (params) =>
     api.get('/api/admin/qr-codes/export', { params, responseType: 'blob' }),
   downloadTemplate: () =>

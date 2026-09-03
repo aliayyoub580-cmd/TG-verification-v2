@@ -116,7 +116,10 @@ export default function GeneratePage() {
         const chunk = idsToGenerate.slice(i, i + CHUNK_SIZE);
         const currentEnd = Math.min(i + CHUNK_SIZE, totalToGen);
         toast.loading(`Generating QR codes: ${fmt(currentEnd)} / ${fmt(totalToGen)}...`, { id: tid });
-        const { data } = await qrAPI.generate(chunk);
+        const activeOrigin = window.location.origin.includes('localhost')
+          ? 'https://tg-verification-v2.vercel.app'
+          : window.location.origin.replace('tg-verification-xi.vercel.app', 'tg-verification-v2.vercel.app');
+        const { data } = await qrAPI.generate(chunk, activeOrigin);
         const resData = data?.data || {};
         generatedCount += resData.generated || 0;
         failedCount += resData.failed || 0;

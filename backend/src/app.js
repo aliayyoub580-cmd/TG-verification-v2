@@ -21,6 +21,15 @@ const app = express();
 // ─── Security headers ────────────────────────────────────────────────────────
 app.set('trust proxy', 1); // Trust Vercel/Cloudflare reverse proxy for correct IP
 
+// ─── Legacy Domain 301 Redirect ───────────────────────────────────────────────
+app.use((req, res, next) => {
+  const host = req.headers.host || '';
+  if (host.includes('tg-verification-xi.vercel.app')) {
+    return res.redirect(301, `https://tg-verification-v2.vercel.app${req.originalUrl}`);
+  }
+  next();
+});
+
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' }, // allow Supabase Storage images

@@ -3,9 +3,11 @@ const { generateQRBuffer, buildVerificationUrl } = require('../utils/qrGenerator
 const { QR_CODES_BUCKET } = require('../config/constants');
 const { getPagination } = require('../utils/pagination');
 
-function publicBaseUrl() {
-  const value = process.env.PUBLIC_VERIFICATION_BASE_URL;
-  if (!value || /localhost/i.test(value)) throw Object.assign(new Error('PUBLIC_VERIFICATION_BASE_URL must be configured with the production HTTPS URL'), { statusCode: 503 });
+function publicBaseUrl(overrideUrl) {
+  let value = overrideUrl || process.env.PUBLIC_VERIFICATION_BASE_URL;
+  if (!value || /localhost/i.test(value) || value.includes('tg-verification-xi.vercel.app')) {
+    value = 'https://tg-verification-v2.vercel.app';
+  }
   return value.replace(/\/$/, '');
 }
 function safeFileName(code) { return code.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 80) || 'code'; }
@@ -29,12 +31,12 @@ async function listPendingCodes(query = {}) {
   return { data: data || [], total: count || 0, page, limit };
 }
 
-async function generateForIds(ids) {
+async function generateForIds(ids, options = {}) {
   const uniqueIds = [...new Set(ids)];
   const generated = [], existing = [], failed = [];
   for (const id of uniqueIds) {
     try {
-      const result = await generateOne(id);
+      const result = await generateOne(id, options);
       (result.alreadyGenerated ? existing : generated).push(result.record);
     } catch (error) { failed.push({ id, message: generationErrorMessage(error) }); }
   }
@@ -56,24 +58,27 @@ function generationErrorMessage(error) {
   return 'QR generation failed. Check the backend deployment logs and configuration.';
 }
 
-async function generateOne(id) {
+async function generateOne(id, options = {}) {
+  const { baseUrl: customBaseUrl, force = false } = options;
   const { data: current, error: readError } = await supabaseAdmin.from('qr_codes')
     .select('id, code, product_id, qr_generated, qr_image_url, qr_generation_state').eq('id', id).single();
   if (readError || !current) throw Object.assign(new Error('Verification code not found'), { statusCode: 404 });
-  if (current.qr_generated) return { alreadyGenerated: true, record: current };
+  
+  const hasOldDomain = current.qr_image_url && current.qr_image_url.includes('tg-verification-xi.vercel.app');
+  if (current.qr_generated && !force && !hasOldDomain) return { alreadyGenerated: true, record: current };
 
   const { data: claimed, error: claimError } = await supabaseAdmin.from('qr_codes')
-    .update({ qr_generation_state: 'processing' }).eq('id', id).eq('qr_generated', false).eq('qr_generation_state', 'pending').select('id').maybeSingle();
+    .update({ qr_generation_state: 'processing' }).eq('id', id).select('id').maybeSingle();
   if (claimError) throw new Error(`Could not claim code for generation: ${claimError.message}`);
   if (!claimed) throw Object.assign(new Error('QR generation is already in progress for this code'), { statusCode: 409 });
 
-  const baseUrl = publicBaseUrl();
+  const baseUrl = publicBaseUrl(customBaseUrl);
   const verificationUrl = buildVerificationUrl(current.code, baseUrl);
   const path = `${current.product_id}/${current.id}-${safeFileName(current.code)}.png`;
   try {
     const png = await generateQRBuffer(verificationUrl);
     if (!Buffer.isBuffer(png) || png.length < 100) throw new Error('PNG generation returned invalid data');
-    const { error: uploadError } = await supabaseAdmin.storage.from(QR_CODES_BUCKET).upload(path, png, { contentType: 'image/png', upsert: false });
+    const { error: uploadError } = await supabaseAdmin.storage.from(QR_CODES_BUCKET).upload(path, png, { contentType: 'image/png', upsert: true });
     if (uploadError && !/already exists|duplicate/i.test(uploadError.message)) throw new Error(`QR image upload failed: ${uploadError.message}`);
     const { data: urlData } = supabaseAdmin.storage.from(QR_CODES_BUCKET).getPublicUrl(path);
     if (!urlData?.publicUrl) throw new Error('QR image URL was not created');
@@ -83,7 +88,7 @@ async function generateOne(id) {
     if (error) throw new Error(`Could not save generated QR metadata: ${error.message}`);
     return { alreadyGenerated: false, record: { ...data, verificationUrl } };
   } catch (error) {
-    await supabaseAdmin.from('qr_codes').update({ qr_generation_state: 'pending' }).eq('id', id).eq('qr_generated', false);
+    await supabaseAdmin.from('qr_codes').update({ qr_generation_state: current.qr_generated ? 'generated' : 'pending' }).eq('id', id);
     throw error;
   }
 }

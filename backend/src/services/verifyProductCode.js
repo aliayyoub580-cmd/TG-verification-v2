@@ -9,6 +9,7 @@
  */
 
 const { verifyCode: dbVerifyCode } = require('./verifyService');
+const { normalizeCode } = require('../utils/csvUtils');
 
 // Built-in mock registry for standalone operation and demonstration
 const MOCK_AUTHENTIC_PRODUCTS = {
@@ -130,7 +131,7 @@ async function verifyProductCode(code, meta = {}) {
     };
   }
 
-  const cleaned = code.trim();
+  const cleaned = normalizeCode(code);
   const normalizedKey = cleaned.toUpperCase().replace(/\s+/g, '');
 
   // 1. Check known mock records first (guaranteed instant response)

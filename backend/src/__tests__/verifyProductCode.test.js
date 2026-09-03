@@ -32,6 +32,16 @@ describe('POST /api/verify (App Clip Verification Flow)', () => {
     expect(res.body.productName).toBeTruthy();
   });
 
+  test('valid mock code submitted as full URL returns 200 authentic', async () => {
+    const res = await request(app)
+      .post('/api/verify')
+      .send({ code: 'https://tg-verification-v2.vercel.app/verify?code=VALID-TG-001' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.authentic).toBe(true);
+    expect(res.body.productName).toContain('T.G. 20 mg');
+  });
+
   test('invalid / counterfeit code returns authentic false', async () => {
     const res = await request(app)
       .post('/api/verify')

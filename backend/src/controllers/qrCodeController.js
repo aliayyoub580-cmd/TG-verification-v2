@@ -8,7 +8,7 @@ const { paginatedResponse } = require('../utils/pagination');
 
 async function list(req,res,next){try{const r=await qrCodeService.listQRCodes(req.query);res.json(paginatedResponse(r.data,r.total,r.page,r.limit));}catch(e){next(e)}}
 async function pending(req,res,next){try{const r=await listPendingCodes(req.query);res.json(paginatedResponse(r.data,r.total,r.page,r.limit));}catch(e){next(e)}}
-async function generate(req,res,next){try{const r=await generateForIds(req.body.ids);if(r.generated===0&&r.alreadyGenerated===0&&r.failed>0)return res.status(422).json({success:false,message:r.errors[0].message,data:r});const partial=r.failed>0;res.status(partial?207:200).json({success:!partial,message:partial?`${r.generated} generated; ${r.failed} failed`:undefined,data:r});}catch(e){next(e)}}
+async function generate(req,res,next){try{const r=await generateForIds(req.body.ids,{baseUrl:req.body.baseUrl,force:req.body.force===true});if(r.generated===0&&r.alreadyGenerated===0&&r.failed>0)return res.status(422).json({success:false,message:r.errors[0].message,data:r});const partial=r.failed>0;res.status(partial?207:200).json({success:!partial,message:partial?`${r.generated} generated; ${r.failed} failed`:undefined,data:r});}catch(e){next(e)}}
 async function getOne(req,res,next){try{res.json({success:true,data:await qrCodeService.getQRCodeById(req.params.id)});}catch(e){next(e)}}
 async function update(req,res,next){try{res.json({success:true,data:await qrCodeService.updateQRCode(req.params.id,req.body)});}catch(e){next(e)}}
 async function remove(req,res,next){try{await qrCodeService.deleteQRCode(req.params.id);res.json({success:true});}catch(e){next(e)}}

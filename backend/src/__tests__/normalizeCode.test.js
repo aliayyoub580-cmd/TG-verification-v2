@@ -22,4 +22,11 @@ describe('normalizeCode', () => {
   test('handles already normalized code', () => {
     expect(normalizeCode('7GG6Y89U8K')).toBe('7GG6Y89U8K');
   });
+
+  test('extracts code query param from full URL', () => {
+    expect(normalizeCode('https://tg-verification-v2.vercel.app/verify?code=2VXT4TN5RB')).toBe('2VXT4TN5RB');
+    expect(normalizeCode('https://tg-verification-xi.vercel.app/verify?code=2VXT4TN5RB')).toBe('2VXT4TN5RB');
+    expect(normalizeCode('http://localhost:5173/verify?code=ABC987XYZ')).toBe('ABC987XYZ');
+    expect(normalizeCode('/verify?code=TEST1234')).toBe('TEST1234');
+  });
 });

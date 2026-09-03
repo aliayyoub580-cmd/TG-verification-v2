@@ -16,6 +16,13 @@ describe('buildVerificationUrl', () => {
       'https://example.com/verify?code=Client%20Code%2F1'
     );
   });
+
+  test('publicBaseUrl sanitizes legacy tg-verification-xi domain', () => {
+    const { publicBaseUrl } = require('../services/generateService');
+    expect(publicBaseUrl('https://tg-verification-xi.vercel.app')).toBe('https://tg-verification-v2.vercel.app');
+    expect(publicBaseUrl('https://tg-verification-v2.vercel.app/')).toBe('https://tg-verification-v2.vercel.app');
+    expect(publicBaseUrl('')).toBe('https://tg-verification-v2.vercel.app');
+  });
 });
 
 describe('generateQRBuffer', () => {

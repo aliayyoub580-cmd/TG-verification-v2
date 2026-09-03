@@ -7,7 +7,11 @@ const ctrl = require('../controllers/qrCodeController');
 
 const router = express.Router();
 router.use(requireAdmin);
-const idsSchema = Joi.object({ ids: Joi.array().items(Joi.string().uuid()).min(1).max(20000).required() });
+const idsSchema = Joi.object({
+  ids: Joi.array().items(Joi.string().uuid()).min(1).max(20000).required(),
+  baseUrl: Joi.string().uri().allow('').optional(),
+  force: Joi.boolean().optional(),
+});
 const zipSchema = Joi.object({ ids: Joi.array().items(Joi.string().uuid()).max(20000).optional(), filters: Joi.object({ search:Joi.string().allow(''), product_id:Joi.string().uuid().allow(''), date_from:Joi.string().allow(''), date_to:Joi.string().allow('') }).optional() }).or('ids','filters');
 const statusSchema = Joi.object({ ids:Joi.array().items(Joi.string().uuid()).min(1).max(1000).required(),status:Joi.string().valid('active','inactive').required() });
 const updateSchema = Joi.object({ status:Joi.string().valid('active','inactive').optional(),product_id:Joi.string().uuid().optional() });
