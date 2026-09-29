@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiX, FiCheck } from 'react-icons/fi';
 import { MdQrCodeScanner } from 'react-icons/md';
 import { RiShieldCheckFill } from 'react-icons/ri';
 
 /**
  * ProductAuthPopup
- * Replicates the half-screen iOS App Clip bottom-sheet popup card
+ * PWA & App Clip card on the page with close (cross) button and app installation capability.
  */
 export default function ProductAuthPopup({
   isOpen,
@@ -13,6 +13,66 @@ export default function ProductAuthPopup({
   onOpenScanner,
   productInfo = null,
 }) {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+  const [showIosTip, setShowIosTip] = useState(false);
+
+  useEffect(() => {
+    if (
+      typeof window !== 'undefined' &&
+      (window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true)
+    ) {
+      setIsStandalone(true);
+    }
+
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', () => {
+      setIsStandalone(true);
+      setDeferredPrompt(null);
+    });
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+    };
+  }, []);
+
+  const isIos = () => {
+    return (
+      typeof navigator !== 'undefined' &&
+      /iPhone|iPad|iPod/i.test(navigator.userAgent)
+    );
+  };
+
+  const handleInstallOrOpen = async () => {
+    if (isStandalone) {
+      onOpenScanner();
+      return;
+    }
+
+    if (deferredPrompt) {
+      try {
+        deferredPrompt.prompt();
+        const choice = await deferredPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+          setIsStandalone(true);
+        }
+      } catch (err) {
+        console.warn('Install prompt error:', err);
+      }
+      setDeferredPrompt(null);
+    } else if (isIos()) {
+      setShowIosTip(true);
+    } else {
+      onOpenScanner();
+    }
+  };
+
   return (
     <>
       {/* Dark Translucent Scrim */}
@@ -33,7 +93,7 @@ export default function ProductAuthPopup({
           {/* iOS Handle Indicator */}
           <div className="appclip-drag-indicator" />
 
-          {/* Top Bar: Client Logo + Close (X) */}
+          {/* Top Bar: Client Logo + Close (X) Cross Button */}
           <div className="appclip-sheet-header">
             <div className="sheet-brand-logo">
               <img
@@ -99,7 +159,9 @@ export default function ProductAuthPopup({
                     <MdQrCodeScanner />
                   </div>
                   <span className="feature-text">
-                    Escanea y verifica la autenticidad de tu producto
+                    {isStandalone
+                      ? 'Escanea y verifica la autenticidad de tu producto'
+                      : 'Instala la app para escanear y verificar tu producto'}
                   </span>
                 </div>
               </div>
@@ -112,23 +174,103 @@ export default function ProductAuthPopup({
             </div>
           </div>
 
-          {/* Below Banner: Title, Subtitle, and Pill "Open" Button */}
+          {/* iOS Safari Home Screen instruction tooltip */}
+          {showIosTip && (
+            <div
+              style={{
+                margin: '12px 16px 0 16px',
+                padding: '10px 14px',
+                background: '#f1f5f9',
+                borderRadius: '12px',
+                fontSize: '12.5px',
+                color: '#1e293b',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                lineHeight: 1.4,
+              }}
+            >
+              <span>
+                Para instalar en iPhone: toca el botón Compartir (
+                <svg
+                  style={{ display: 'inline', verticalAlign: '-2px', width: '14px', height: '14px' }}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                  <polyline points="16 6 12 2 8 6" />
+                  <line x1="12" y1="2" x2="12" y2="15" />
+                </svg>
+                ) y selecciona <strong>"Agregar a pantalla de inicio"</strong>.
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowIosTip(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  color: '#64748b',
+                  marginLeft: '8px',
+                }}
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          {/* Below Banner: Title, Subtitle, and Pill "Install" / "Open" Button */}
           <div className="sheet-action-row">
             <div className="sheet-action-info">
-              <h3 className="sheet-action-title">Autentica ahora</h3>
+              <h3 className="sheet-action-title">
+                {isStandalone ? 'Autentica ahora' : 'Instalar aplicación'}
+              </h3>
               <p className="sheet-action-sub">
-                {productInfo?.name ? `Producto: ${productInfo.name}` : 'Escanee el QR del producto'}
+                {isStandalone
+                  ? productInfo?.name
+                    ? `Producto: ${productInfo.name}`
+                    : 'Escanee el QR del producto'
+                  : 'Instale la app para verificar la autenticidad'}
               </p>
             </div>
 
-            <button
-              type="button"
-              className="sheet-open-btn"
-              onClick={onOpenScanner}
-              id="appclip-open-button"
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-end',
+                gap: '4px',
+              }}
             >
-              Open
-            </button>
+              <button
+                type="button"
+                className="sheet-open-btn"
+                onClick={handleInstallOrOpen}
+                id="appclip-open-button"
+              >
+                {isStandalone ? 'Open' : 'Install'}
+              </button>
+              {!isStandalone && (
+                <button
+                  type="button"
+                  onClick={onOpenScanner}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#64748b',
+                    fontSize: '11.5px',
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    padding: '2px 4px',
+                  }}
+                >
+                  Continuar sin instalar
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Normal In-Page Footer Row */}
