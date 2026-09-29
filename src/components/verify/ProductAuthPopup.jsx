@@ -191,7 +191,7 @@ export default function ProductAuthPopup({
               }}
             >
               <span>
-                Para instalar en iPhone: toca el botón Compartir (
+                To install on iPhone: tap the Share button (
                 <svg
                   style={{ display: 'inline', verticalAlign: '-2px', width: '14px', height: '14px' }}
                   viewBox="0 0 24 24"
@@ -203,7 +203,7 @@ export default function ProductAuthPopup({
                   <polyline points="16 6 12 2 8 6" />
                   <line x1="12" y1="2" x2="12" y2="15" />
                 </svg>
-                ) y selecciona <strong>"Agregar a pantalla de inicio"</strong>.
+                ) and select <strong>"Add to Home Screen"</strong>.
               </span>
               <button
                 type="button"
@@ -226,14 +226,14 @@ export default function ProductAuthPopup({
           <div className="sheet-action-row">
             <div className="sheet-action-info">
               <h3 className="sheet-action-title">
-                {isStandalone ? 'Autentica ahora' : 'Instalar aplicación'}
+                {isStandalone ? 'Authenticate now' : 'Install application'}
               </h3>
               <p className="sheet-action-sub">
                 {isStandalone
                   ? productInfo?.name
-                    ? `Producto: ${productInfo.name}`
-                    : 'Escanee el QR del producto'
-                  : 'Instale la app para verificar la autenticidad'}
+                    ? `Product: ${productInfo.name}`
+                    : 'Scan the product QR'
+                  : 'Install the app to verify authenticity'}
               </p>
             </div>
 
@@ -267,7 +267,7 @@ export default function ProductAuthPopup({
                     padding: '2px 4px',
                   }}
                 >
-                  Continuar sin instalar
+                  Continue without installing
                 </button>
               )}
             </div>
