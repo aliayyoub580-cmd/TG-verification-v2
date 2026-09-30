@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import ProductAuthPopup from './ProductAuthPopup.jsx';
+import OnboardingInstructions from './OnboardingInstructions.jsx';
 import ScannerView from './ScannerView.jsx';
 import ResultView from './ResultView.jsx';
 import { verifyAPI } from '../../services/api.js';
@@ -15,25 +16,39 @@ import '../../styles/app-clip.css';
  */
 export default function VerifyFlow() {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const urlCode = searchParams.get('code');
   const urlSku = searchParams.get('sku');
+  const isDirectScan =
+    location.pathname.includes('/scan') ||
+    searchParams.get('mode') === 'scan' ||
+    searchParams.get('scan') === '1';
 
-  // State machine: 'idle' | 'popup' | 'scanning' | 'result'
-  const [flowState, setFlowState] = useState('idle');
+  // State machine: 'idle' | 'popup' | 'onboarding' | 'scanning' | 'result'
+  const [flowState, setFlowState] = useState(isDirectScan ? 'scanning' : 'idle');
   const [isValidating, setIsValidating] = useState(false);
   const [scannedCode, setScannedCode] = useState(urlCode || '');
   const [verificationResult, setVerificationResult] = useState(null);
 
-  // Animate popup on initial page load
+  // Animate popup on initial page load if not on direct scan
   useEffect(() => {
+    if (isDirectScan) {
+      setFlowState('scanning');
+      return;
+    }
     const timer = setTimeout(() => {
       setFlowState('popup');
     }, 180);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isDirectScan]);
 
-  // Handler: User taps "Open" on the bottom sheet
+  // Handler: User taps "Open" on the bottom sheet -> show onboarding
   const handleOpenScanner = () => {
+    setFlowState('onboarding');
+  };
+
+  // Handler: User finishes onboarding and taps "Authenticate"
+  const handleStartScanning = () => {
     setFlowState('scanning');
   };
 
@@ -155,6 +170,35 @@ function extractVerificationCode(input) {
         onOpenScanner={handleOpenScanner}
         productInfo={urlSku ? { name: urlSku } : null}
       />
+
+      {/* ── 1.5. Onboarding Instructions Step Modal ── */}
+      {flowState === 'onboarding' && (
+        <div className="onboarding-flow-container">
+          {/* Render the scanner view in background preview mode or ambient backdrop */}
+          <div className="onboarding-ambient-bg" aria-hidden="true">
+            <header className="authnow-top-bar">
+              <div className="authnow-menu-button">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 6H20M4 12H20M4 18H20" stroke="#2e2a72" strokeWidth="2.8" strokeLinecap="round" />
+                </svg>
+              </div>
+              <div className="authnow-brand-header">
+                <img
+                  src="/Scanner%20Interface/Interface%20Logo.png"
+                  alt="now auth"
+                  className="authnow-brand-logo-img"
+                />
+              </div>
+              <div className="authnow-top-spacer" />
+            </header>
+            <div className="authnow-viewfinder-section">
+              <div className="authnow-viewfinder-frame" />
+            </div>
+          </div>
+
+          <OnboardingInstructions onStartScan={handleStartScanning} />
+        </div>
+      )}
 
       {/* ── 2. Full-Screen Camera Scanner Screen ── */}
       {flowState === 'scanning' && (

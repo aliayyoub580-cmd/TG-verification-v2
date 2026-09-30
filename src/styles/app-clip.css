@@ -6,25 +6,25 @@
   --clip-bg: #f8f9fa;
   --clip-surface: #ffffff;
   --clip-scrim: rgba(12, 14, 28, 0.65);
-  
+
   /* Palette from reference */
   --clip-headline-dark: #2a251b;
   --clip-headline-accent: #c47c16;
   --clip-accent-stripe: #e69d27;
   --clip-text-muted: #6b7280;
   --clip-text-sub: #8c897f;
-  
+
   /* Brand colors */
   --clip-green-primary: #10b981;
   --clip-green-hover: #059669;
   --clip-green-glow: rgba(16, 185, 129, 0.35);
-  
+
   /* Scanner theme */
   --scanner-bg-start: #080d26;
   --scanner-bg-end: #17123d;
   --scanner-reticle-border: rgba(255, 255, 255, 0.15);
   --scanner-reticle-green: #22c55e;
-  
+
   /* Radius & Shadows */
   --radius-clip-sheet: 28px;
   --radius-card: 16px;
@@ -448,8 +448,15 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Scanner Top Bar */
@@ -611,9 +618,19 @@
 }
 
 @keyframes laserSweep {
-  0% { top: 12px; opacity: 0.8; }
-  50% { opacity: 1; }
-  100% { top: calc(100% - 15px); opacity: 0.8; }
+  0% {
+    top: 12px;
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    top: calc(100% - 15px);
+    opacity: 0.8;
+  }
 }
 
 /* Flashlight / Torch Toggle inside the camera box bottom-right */
@@ -669,8 +686,13 @@
 }
 
 @keyframes indeterminateBar {
-  0% { left: -40%; }
-  100% { left: 100%; }
+  0% {
+    left: -40%;
+  }
+
+  100% {
+    left: 100%;
+  }
 }
 
 /* Dynamic hint text under frame */
@@ -761,8 +783,15 @@
 }
 
 @keyframes resultSlideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .result-content-wrap {
@@ -790,9 +819,19 @@
 }
 
 @keyframes scalePop {
-  0% { transform: scale(0.3); opacity: 0; }
-  70% { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .result-hero-icon.authentic {
@@ -1072,4 +1111,1129 @@
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+}
+
+/* ==========================================================================
+   AUTHNOW SCANNER INTERFACE (Pixel-Perfect Match to Scanner Interface.PNG)
+   ========================================================================== */
+
+.authnow-scanner-screen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: linear-gradient(180deg, #3d3ac6 0%, #433fd1 50%, #4a45db 100%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', Roboto, sans-serif;
+  animation: authNowFadeIn 0.3s ease-out;
+}
+
+@keyframes authNowFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Top Bar ────────────────────────────────────────────────────────────── */
+.authnow-top-bar {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) 20px 8px 20px;
+  box-sizing: border-box;
+}
+
+/* White rounded square hamburger button */
+.authnow-menu-button {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.authnow-menu-button:active {
+  transform: scale(0.94);
+  background: #f1f5f9;
+}
+
+/* Center AuthNow Shield + Wordmark */
+.authnow-brand-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.authnow-brand-logo-img {
+  height: calc(52px + 0.7rem);
+  max-width: 205px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.22));
+}
+
+.authnow-shield-svg {
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.2));
+}
+
+.authnow-text-block {
+  display: flex;
+  flex-direction: column;
+  line-height: 0.88;
+  text-align: left;
+}
+
+.authnow-auth {
+  font-size: 27px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+}
+
+.authnow-now {
+  font-size: 27px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+  position: relative;
+}
+
+.authnow-w-accent {
+  color: #4ade80;
+  position: relative;
+  display: inline-block;
+}
+
+.authnow-top-spacer {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+/* ── Center Viewfinder Section ─────────────────────────────────────────── */
+.authnow-viewfinder-section {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 20px;
+  box-sizing: border-box;
+}
+
+.authnow-viewfinder-frame {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 1.2 / 1;
+  background: #d8d8d8;
+  border-radius: 22px;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authnow-camera-mount {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  background: #d8d8d8;
+}
+
+.authnow-camera-mount video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 20px;
+}
+
+/* In-Feed Translucent Dark Guidance Pill (e.g. "Move back slowly") */
+.authnow-inframe-guidance-pill {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 18px;
+  color: #4ade80;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  z-index: 8;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  animation: pillPulse 2.8s ease-in-out infinite;
+}
+
+@keyframes pillPulse {
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+}
+
+/* Bottom-Right Torch / Flashlight FAB Button */
+.authnow-torch-fab {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #323b49;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.authnow-torch-fab:active {
+  transform: scale(0.92);
+}
+
+.authnow-torch-fab.active {
+  background: #f59e0b;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.65);
+}
+
+/* Camera Fallback when blocked */
+.authnow-camera-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  background: #090e24;
+  color: #94a3b8;
+  z-index: 4;
+}
+
+.authnow-fallback-icon {
+  font-size: 38px;
+  color: #f43f5e;
+  margin-bottom: 10px;
+}
+
+.authnow-fallback-text {
+  font-size: 13px;
+  margin: 0 0 14px 0;
+  line-height: 1.4;
+  color: #cbd5e1;
+}
+
+.authnow-fallback-btn {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* ── Middle Guidance Section ───────────────────────────────────────────── */
+.authnow-guidance-section {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* Circular Info Button (i) */
+.authnow-info-circle-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #3d3ac6;
+  border: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.authnow-info-circle-btn:active {
+  transform: scale(0.92);
+}
+
+/* Dynamic Guidance Detail Text (e.g. "Move back a little more") */
+.authnow-guidance-detail-text {
+  margin: 18px 0 0 0;
+  font-size: 21px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  text-align: center;
+  line-height: 1.3;
+  cursor: pointer;
+  max-width: 340px;
+  transition: opacity 0.25s ease;
+}
+
+/* ── Bottom Pinned Vibrant Green "Stop" Button ──────────────────────────── */
+.authnow-bottom-bar {
+  width: 100%;
+  max-width: 480px;
+  padding: 12px 20px calc(24px + env(safe-area-inset-bottom, 0px)) 20px;
+  box-sizing: border-box;
+}
+
+.authnow-stop-btn {
+  width: 100%;
+  height: 54px;
+  background: #3bb54a;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(59, 181, 74, 0.38);
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.authnow-stop-btn:hover {
+  background: #34a342;
+  box-shadow: 0 6px 22px rgba(59, 181, 74, 0.48);
+}
+
+.authnow-stop-btn:active {
+  transform: scale(0.985);
+  background: #2e923b;
+}
+
+/* ── Modals & Sheets (Guidance and Menu) ────────────────────────────────── */
+.authnow-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 14, 30, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: backdropFade 0.25s ease-out;
+}
+
+@keyframes backdropFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.authnow-modal-card {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  color: #0f172a;
+  border-radius: 24px 24px 0 0;
+  padding: 22px 20px calc(24px + env(safe-area-inset-bottom, 0px)) 20px;
+  box-sizing: border-box;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3);
+  animation: sheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.authnow-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.authnow-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.authnow-modal-title-row h3 {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.authnow-modal-icon-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.authnow-modal-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.authnow-modal-subtext {
+  font-size: 13.5px;
+  color: #64748b;
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+/* Guidance Tips List */
+.authnow-guidance-tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.guidance-tip-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.tip-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.guidance-tip-card h4 {
+  margin: 0 0 3px 0;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.guidance-tip-card p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.authnow-modal-action-btn {
+  width: 100%;
+  background: #10b981;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+/* Menu Actions List */
+.authnow-menu-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.authnow-menu-row-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.authnow-menu-row-btn:hover {
+  background: #f1f5f9;
+}
+
+.authnow-menu-row-btn .row-icon {
+  font-size: 18px;
+  color: #3b82f6;
+}
+
+.menu-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 8px 0;
+}
+
+.menu-section-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.authnow-menu-row-btn.preset-authentic {
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.authnow-menu-row-btn.preset-counterfeit {
+  color: #b91c1c;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-green {
+  background: #22c55e;
+}
+
+.dot-red {
+  background: #ef4444;
+}
+
+/* Manual Code Input */
+.authnow-input-field {
+  width: 100%;
+  padding: 13px 14px;
+  font-size: 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.authnow-input-field:focus {
+  border-color: #3b82f6;
+}
+
+.modal-quick-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.quick-chip {
+  background: #f1f5f9;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.quick-chip:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.authnow-modal-btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.authnow-btn-secondary {
+  flex: 1;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  padding: 13px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.authnow-btn-primary {
+  flex: 1;
+  background: #10b981;
+  color: #ffffff;
+  border: none;
+  padding: 13px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   POPUP SCREEN STYLING (Pixel-Perfect Match to Screenshot.PNG)
+   ========================================================================== */
+
+.popup-clip-sheet {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 28px 28px 0 0 !important;
+  box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  padding: 0;
+  margin: 0 auto;
+}
+
+/* Hero Banner Container with PopUp/Image.jpg */
+.popup-hero-banner-container {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+  overflow: hidden;
+}
+
+.popup-hero-banner-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 28px 28px 0 0;
+}
+
+/* Floating Round White Close (X) Button matching Screenshot.PNG */
+.popup-floating-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: none;
+  color: #1f2937;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.popup-floating-close-btn:active {
+  transform: scale(0.92);
+  background: #f1f5f9;
+}
+
+/* Middle Action Row */
+.popup-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 0 20px;
+  box-sizing: border-box;
+  gap: 12px;
+}
+
+.popup-action-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  min-width: 0;
+  flex: 1;
+}
+
+.popup-title {
+  margin: 0;
+  font-size: clamp(19px, 5.2vw, 24px);
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+}
+
+.popup-subtitle {
+  margin: 3px 0 0 0;
+  font-size: clamp(13.5px, 3.8vw, 16px);
+  color: #4b5563;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+/* Actions column (Open + Install button) */
+.popup-actions-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+/* Vibrant iOS Blue Pill Open Button */
+.popup-open-btn {
+  background: #007aff;
+  color: #ffffff;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.35);
+  transition: background-color 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.popup-open-btn:hover {
+  background: #006ee6;
+}
+
+.popup-open-btn:active {
+  transform: scale(0.96);
+  background: #005ecb;
+}
+
+/* Install application button */
+.popup-install-btn {
+  background: none;
+  border: none;
+  color: #007aff;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 2px;
+  text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+.popup-install-btn:hover {
+  opacity: 0.8;
+}
+
+/* Install Tooltip */
+.popup-install-tooltip {
+  margin: 10px 18px 0 18px;
+  padding: 10px 14px;
+  background: #f0f7ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #1e3a8a;
+  line-height: 1.35;
+}
+
+.popup-tooltip-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.popup-tooltip-icon {
+  font-size: 16px;
+  color: #007aff;
+  flex-shrink: 0;
+}
+
+.popup-tooltip-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+/* Divider Line */
+.popup-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 16px 20px 12px 20px;
+}
+
+/* Bottom App Store Footer Row */
+.popup-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px calc(18px + env(safe-area-inset-bottom, 0px)) 20px;
+  box-sizing: border-box;
+}
+
+.popup-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* App Clip Icon Container with Decorative Brackets */
+.popup-appclip-icon-wrap {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.popup-footer-app-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+}
+
+.popup-footer-text-col {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 1px;
+}
+
+.popup-provided-by {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.popup-provider-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  line-height: 1.15;
+  margin: 0;
+}
+
+.popup-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.popup-age-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 1px 5px;
+  line-height: 1.2;
+}
+
+.popup-appstore-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-chevron-icon {
+  font-size: 19px;
+  color: #9ca3af;
+  margin-left: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ONBOARDING INSTRUCTIONS MODAL (AuthNow Step 1-2-3 & Progress Bar)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.onboarding-flow-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1c1d68;
+}
+
+.onboarding-ambient-bg {
+  position: absolute;
+  inset: 0;
+  background: #1c1d68;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+.onboarding-overlay {
+  position: relative;
+  z-index: 110;
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+}
+
+.onboarding-card {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 34px 26px 30px 26px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  box-sizing: border-box;
+  animation: modalPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.onboarding-step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.onboarding-step-num {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f73f8 0%, #635bff 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  box-shadow: 0 3px 10px rgba(99, 91, 255, 0.35);
+}
+
+.onboarding-step-body {
+  flex: 1;
+  text-align: left;
+}
+
+.onboarding-step-title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0b1120;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.onboarding-step-desc {
+  margin: 0;
+  font-size: 15.5px;
+  color: #4b5563;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Light Grey QR Graphic from reference */
+.onboarding-qr-wrap {
+  margin-top: 14px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.onboarding-qr-svg {
+  display: block;
+}
+
+/* Bottom Action Area */
+.onboarding-bottom-action {
+  margin-top: 20px;
+  min-height: 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.onboarding-progress-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.onboarding-progress-text {
+  font-size: 14.5px;
+  color: #4b5563;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.onboarding-progress-track {
+  width: 100%;
+  height: 9px;
+  background: #e5e7eb;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.onboarding-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 9999px;
+  transition: width 0.08s linear;
+}
+
+.onboarding-auth-btn {
+  width: 100%;
+  height: 56px;
+  background: linear-gradient(90deg, #387df8 0%, #905cfc 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.42);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.onboarding-auth-btn:hover {
+  box-shadow: 0 10px 28px rgba(99, 102, 241, 0.55);
+}
+
+.onboarding-auth-btn:active {
+  transform: scale(0.98);
 }

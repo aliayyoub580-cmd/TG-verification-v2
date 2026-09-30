@@ -34,6 +34,7 @@ export default function App() {
       <Routes>
         {/* Public verification */}
         <Route path="/verify" element={<VerifyPage />} />
+        <Route path="/scan" element={<VerifyPage />} />
 
         {/* Admin login */}
         <Route path="/admin/login" element={<LoginPage />} />

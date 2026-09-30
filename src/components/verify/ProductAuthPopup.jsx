@@ -1,11 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { FiX, FiCheck } from 'react-icons/fi';
-import { MdQrCodeScanner } from 'react-icons/md';
-import { RiShieldCheckFill } from 'react-icons/ri';
+import { FiX, FiChevronRight, FiDownload, FiShare } from 'react-icons/fi';
+
+/**
+ * AppStoreIcon
+ * Apple App Store 'A' compass logo
+ */
+function AppStoreIcon({ size = 20, bg = '#8e8e93', style = {} }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={size}
+      height={size}
+      fill="none"
+      style={{ verticalAlign: 'middle', display: 'inline-block', flexShrink: 0, ...style }}
+    >
+      <rect width="24" height="24" rx="5.5" fill={bg} />
+      <path
+        d="M12 4.5L7.2 16.5M12 4.5L16.8 16.5M6 14H18"
+        stroke="#ffffff"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 /**
  * ProductAuthPopup
- * PWA & App Clip card on the page with close (cross) button and app installation capability.
+ * iOS App Clip bottom sheet matching Screenshot.PNG with Image.jpg banner, App Icon.png footer,
+ * and PWA install / open scanner actions.
  */
 export default function ProductAuthPopup({
   isOpen,
@@ -49,9 +73,9 @@ export default function ProductAuthPopup({
     );
   };
 
-  const handleInstallOrOpen = async () => {
+  const handleInstall = async () => {
     if (isStandalone) {
-      onOpenScanner();
+      alert('Application is already installed on your device.');
       return;
     }
 
@@ -69,216 +93,132 @@ export default function ProductAuthPopup({
     } else if (isIos()) {
       setShowIosTip(true);
     } else {
-      onOpenScanner();
+      setShowIosTip(true);
     }
   };
 
   return (
     <>
-      {/* Dark Translucent Scrim */}
+      {/* Dark Translucent Backdrop */}
       <div
         className={`appclip-scrim ${isOpen ? 'open' : ''}`}
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Bottom Sheet Container */}
+      {/* Bottom Sheet Modal Container */}
       <div className="appclip-sheet-wrap">
         <div
-          className={`appclip-sheet ${isOpen ? 'open' : ''}`}
+          className={`appclip-sheet popup-clip-sheet ${isOpen ? 'open' : ''}`}
           role="dialog"
           aria-modal="true"
           aria-label="Product Authenticity Verification Card"
         >
-          {/* iOS Handle Indicator */}
-          <div className="appclip-drag-indicator" />
+          {/* Top Graphic Banner with Image.jpg and Floating Close (X) Button */}
+          <div className="popup-hero-banner-container">
+            <img
+              src="/PopUp/Image.jpg"
+              alt="Valida la autenticidad de tu producto"
+              className="popup-hero-banner-img"
+              onError={(e) => {
+                e.currentTarget.src = '/T.G.%2020mg.png';
+              }}
+            />
 
-          {/* Top Bar: Client Logo + Close (X) Cross Button */}
-          <div className="appclip-sheet-header">
-            <div className="sheet-brand-logo">
-              <img
-                src="/logo.png"
-                alt="Indufar"
-                className="sheet-brand-img"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  const fb = e.currentTarget.nextSibling;
-                  if (fb) fb.style.display = 'inline-block';
-                }}
-              />
-              <span className="sheet-brand-fallback" style={{ display: 'none' }}>
-                INDUFAR
-              </span>
-            </div>
-
+            {/* Floating Round Close Button matching Screenshot.PNG */}
             <button
               type="button"
-              className="sheet-close-btn"
+              className="popup-floating-close-btn"
               onClick={onClose}
               aria-label="Close verification card"
               title="Close"
+              id="close-popup-btn"
             >
               <FiX />
             </button>
           </div>
 
-          {/* Hero Banner Section with Mustard Accent Stripe */}
-          <div className="sheet-hero-banner">
-            <div className="sheet-banner-stripe" />
-            <div className="sheet-banner-content">
-              {/* Product / Facility Watermark Graphic */}
-              <img
-                src="/T.G.%2020mg.png"
-                alt="Product Watermark"
-                className="sheet-banner-graphic"
-                onError={(e) => {
-                  e.currentTarget.src = '/favicon.svg';
-                }}
-              />
-
-              {/* Bold Headline in 2-3 lines & colors */}
-              <h2 className="sheet-headline">
-                VALIDA LA
-                <span className="accent">AUTENTICIDAD</span>
-                DE TU PRODUCTO
-              </h2>
-
-              {/* Two Feature Rows with Icons */}
-              <div className="sheet-feature-list">
-                <div className="sheet-feature-item">
-                  <div className="feature-icon-circle">
-                    <FiCheck />
-                  </div>
-                  <span className="feature-text">
-                    Verifica que tu producto es auténtico y original
-                  </span>
-                </div>
-
-                <div className="sheet-feature-item">
-                  <div className="feature-icon-circle qr">
-                    <MdQrCodeScanner />
-                  </div>
-                  <span className="feature-text">
-                    {isStandalone
-                      ? 'Escanea y verifica la autenticidad de tu producto'
-                      : 'Instala la app para escanear y verificar tu producto'}
-                  </span>
-                </div>
-              </div>
-
-              {/* App Badge/Logo ("AuthNow" style: shield-check + wordmark) */}
-              <div className="sheet-authnow-badge">
-                <RiShieldCheckFill className="authnow-badge-icon" />
-                <span className="authnow-badge-text">AuthNow</span>
-              </div>
-            </div>
-          </div>
-
-          {/* iOS Safari Home Screen instruction tooltip */}
+          {/* iOS / Browser Install Instructions Tooltip */}
           {showIosTip && (
-            <div
-              style={{
-                margin: '12px 16px 0 16px',
-                padding: '10px 14px',
-                background: '#f1f5f9',
-                borderRadius: '12px',
-                fontSize: '12.5px',
-                color: '#1e293b',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                lineHeight: 1.4,
-              }}
-            >
-              <span>
-                To install on iPhone: tap the Share button (
-                <svg
-                  style={{ display: 'inline', verticalAlign: '-2px', width: '14px', height: '14px' }}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                  <polyline points="16 6 12 2 8 6" />
-                  <line x1="12" y1="2" x2="12" y2="15" />
-                </svg>
-                ) and select <strong>"Add to Home Screen"</strong>.
-              </span>
+            <div className="popup-install-tooltip">
+              <div className="popup-tooltip-content">
+                <FiShare className="popup-tooltip-icon" />
+                <span>
+                  To install: tap the browser <strong>Share</strong> button and select <strong>"Add to Home Screen"</strong>.
+                </span>
+              </div>
               <button
                 type="button"
+                className="popup-tooltip-close"
                 onClick={() => setShowIosTip(false)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  color: '#64748b',
-                  marginLeft: '8px',
-                }}
+                aria-label="Close installation tip"
               >
                 ×
               </button>
             </div>
           )}
 
-          {/* Below Banner: Title, Subtitle, and Pill "Install" / "Open" Button */}
-          <div className="sheet-action-row">
-            <div className="sheet-action-info">
-              <h3 className="sheet-action-title">
-                {isStandalone ? 'Authenticate now' : 'Install application'}
+          {/* Middle Action Row: "Authenticate now" + "Scan the product QR code" + Actions */}
+          <div className="popup-action-row">
+            <div className="popup-action-text">
+              <h3 className="popup-title">
+                {productInfo?.name ? `Authenticate ${productInfo.name}` : 'Authenticate now'}
               </h3>
-              <p className="sheet-action-sub">
-                {isStandalone
-                  ? productInfo?.name
-                    ? `Product: ${productInfo.name}`
-                    : 'Scan the product QR'
-                  : 'Install the app to verify authenticity'}
-              </p>
+              <p className="popup-subtitle">Scan the product QR code</p>
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-end',
-                gap: '4px',
-              }}
-            >
+            <div className="popup-actions-col">
               <button
                 type="button"
-                className="sheet-open-btn"
-                onClick={handleInstallOrOpen}
+                className="popup-open-btn"
+                onClick={onOpenScanner}
                 id="appclip-open-button"
               >
-                {isStandalone ? 'Open' : 'Install'}
+                Open
               </button>
               {!isStandalone && (
                 <button
                   type="button"
-                  onClick={onOpenScanner}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#64748b',
-                    fontSize: '11.5px',
-                    cursor: 'pointer',
-                    textDecoration: 'underline',
-                    padding: '2px 4px',
-                  }}
+                  className="popup-install-btn"
+                  onClick={handleInstall}
+                  id="appclip-install-button"
+                  title="Install application to your home screen"
                 >
-                  Continue without installing
+                  <FiDownload style={{ fontSize: '11px', marginRight: '3px' }} />
+                  Install application
                 </button>
               )}
             </div>
           </div>
 
-          {/* Normal In-Page Footer Row */}
-          <div className="sheet-footer-row">
-            <RiShieldCheckFill className="sheet-footer-icon" />
-            <span className="sheet-footer-text">
-              Powered by <strong>AuthNow – Product Verification</strong>
-            </span>
+          {/* Divider */}
+          <div className="popup-divider" />
+
+          {/* Bottom Footer Row: Provided by AuthNow + App Icon + 4+ + App Store + Chevron */}
+          <div className="popup-footer-row">
+            <div className="popup-footer-left">
+              {/* App Clip Icon using Untitled design.png */}
+              <div className="popup-appclip-icon-wrap">
+                <img
+                  src="/Untitled%20design.png"
+                  alt="AuthNow"
+                  className="popup-footer-app-icon"
+                />
+              </div>
+
+              <div className="popup-footer-text-col">
+                <span className="popup-provided-by">Provided by:</span>
+                <span className="popup-provider-name">AuthNow – Prod...</span>
+              </div>
+            </div>
+
+            <div className="popup-footer-right">
+              <span className="popup-age-badge">4+</span>
+              <div className="popup-appstore-badge">
+                <AppStoreIcon size={20} bg="#8e8e93" />
+              </div>
+              <FiChevronRight className="popup-chevron-icon" />
+            </div>
           </div>
         </div>
       </div>
