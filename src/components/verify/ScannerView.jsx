@@ -125,6 +125,14 @@ export default function ScannerView({
   const html5QrCodeRef = useRef(null);
   const fileInputRef = useRef(null);
   const isStoppingRef = useRef(false);
+  const [recognitionFailedModalOpen, setRecognitionFailedModalOpen] = useState(false);
+
+  // Authenticate button click handler:
+  // When user clicks the green "Authenticate" button on the scanner page:
+  // If no product QR is in view/recognized, show "Product not recognized" modal.
+  const handleAuthenticateClick = () => {
+    setRecognitionFailedModalOpen(true);
+  };
 
   // Rotate guidance tips periodically while scanning
   useEffect(() => {
@@ -416,14 +424,47 @@ export default function ScannerView({
         <button
           type="button"
           className="authnow-stop-btn"
-          onClick={() => {
-            stopScannerSafe().then(() => onCancel());
-          }}
+          onClick={handleAuthenticateClick}
           id="scanner-stop-button"
         >
           Authenticate
         </button>
       </footer>
+
+      {/* ── "Product not recognized" Modal (matching screenshot) ── */}
+      {recognitionFailedModalOpen && (
+        <div
+          className="authnow-modal-backdrop"
+          onClick={() => setRecognitionFailedModalOpen(false)}
+        >
+          <div
+            className="authnow-not-recognized-card"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-label="Product not recognized"
+          >
+            {/* Red Circle with Cross (X) icon */}
+            <div className="not-recognized-icon-circle">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" stroke="#f43f5e" strokeWidth="1.8" />
+                <line x1="15" y1="9" x2="9" y2="15" />
+                <line x1="9" y1="9" x2="15" y2="15" />
+              </svg>
+            </div>
+
+            <h3 className="not-recognized-title">Product not recognized</h3>
+            <p className="not-recognized-desc">This product could not be recognized.</p>
+
+            <button
+              type="button"
+              className="not-recognized-ok-btn"
+              onClick={() => setRecognitionFailedModalOpen(false)}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── Hidden File Input for Image Scanning ── */}
       <input
