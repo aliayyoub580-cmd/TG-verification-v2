@@ -215,7 +215,11 @@ export default function ProductAuthPopup({
             <div className="popup-footer-right">
               <span className="popup-age-badge">4+</span>
               <div className="popup-appstore-badge">
-                <AppStoreIcon size={20} bg="#8e8e93" />
+                <img
+                  src="/icon_appstore__ev0z770zyxoy_large_2x.png"
+                  alt="App Store"
+                  className="popup-appstore-icon-img"
+                />
               </div>
               <FiChevronRight className="popup-chevron-icon" />
             </div>

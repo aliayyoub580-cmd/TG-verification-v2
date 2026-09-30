@@ -2055,6 +2055,14 @@
   justify-content: center;
 }
 
+.popup-appstore-icon-img {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  object-fit: cover;
+  display: block;
+}
+
 .popup-chevron-icon {
   font-size: 19px;
   color: #9ca3af;
