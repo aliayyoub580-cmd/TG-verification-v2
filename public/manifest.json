@@ -1,7 +1,7 @@
 {
-  "name": "TG QR Verification",
-  "short_name": "TG Verification",
-  "description": "Verify the authenticity of your Indufar TG products.",
+  "name": "NowAuth",
+  "short_name": "NowAuth",
+  "description": "Verify the authenticity of your products with NowAuth.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

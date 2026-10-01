@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tg-qr-pwa-v2';
+const CACHE_NAME = 'nowauth-pwa-v1';
 
 // Core shell assets to precache for reliable PWA installation
 const PRECACHE_ASSETS = [
