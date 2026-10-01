@@ -9,7 +9,9 @@ const { safeFileName } = require(path.resolve(__dirname, '../backend/src/service
 
 const BASE_URL = 'https://tg-verification-v2.vercel.app';
 const TARGET_DIR = path.resolve(__dirname, '../src/pages/Qr code zip');
-const ZIP_PATH = path.join(TARGET_DIR, 'Batch 1 10K Codes.zip');
+const BATCH_NAME = process.argv[2] || 'Batch 2 10K Codes';
+const BATCH_ID = process.argv[3] || 'd3e6af2b-7323-4f87-bfc2-7b00213665b9';
+const ZIP_PATH = path.join(TARGET_DIR, `${BATCH_NAME}.zip`);
 const SUPABASE_STORAGE_URL = 'https://ghbgqekqvjwsqtdreqlc.supabase.co/storage/v1/object/public/qr-codes';
 
 function buildVerificationUrl(code) {
@@ -50,14 +52,21 @@ if (!isMainThread) {
 
 // Main thread logic
 async function run() {
-  console.log('=== Step 1: Fetching 10,000 codes from database ===');
+  console.log(`=== Step 1: Fetching 10,000 codes for batch '${BATCH_NAME}' (${BATCH_ID}) ===`);
   const allCodes = [];
   const PAGE_SIZE = 1000;
   for (let i = 0; i < 10; i++) {
-    const { data, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('qr_codes')
-      .select('id, code, product_id, qr_generated, qr_image_path, qr_image_url')
-      .gte('imported_at', '2026-10-01T00:00:00Z')
+      .select('id, code, product_id, qr_generated, qr_image_path, qr_image_url');
+
+    if (BATCH_ID) {
+      query = query.eq('imported_batch_id', BATCH_ID);
+    } else {
+      query = query.eq('qr_generated', false);
+    }
+
+    const { data, error } = await query
       .order('id')
       .range(i * PAGE_SIZE, (i + 1) * PAGE_SIZE - 1);
 
@@ -71,7 +80,7 @@ async function run() {
   }
 
   if (allCodes.length === 0) {
-    throw new Error('No codes found for today!');
+    throw new Error('No codes found to process!');
   }
   console.log(`Total codes to process: ${allCodes.length}`);
 
@@ -84,13 +93,12 @@ async function run() {
     console.log(`Directory exists: ${TARGET_DIR}`);
   }
 
-  // Remove existing partial zip if any
   if (fs.existsSync(ZIP_PATH)) {
     try { fs.unlinkSync(ZIP_PATH); } catch (e) {}
   }
 
   // Step 3: Generate QR codes and write to ZIP
-  console.log('\n=== Step 3: Generating QR codes & creating ZIP archive ===');
+  console.log(`\n=== Step 3: Generating QR codes & creating ZIP archive at '${ZIP_PATH}' ===`);
   const outStream = fs.createWriteStream(ZIP_PATH);
   const archive = archiver('zip', { zlib: { level: 6 } });
 
@@ -193,7 +201,7 @@ async function run() {
   // Step 5: Upload images to Supabase Storage in pool
   console.log('\n=== Step 5: Uploading images to Supabase Storage (qr-codes bucket) ===');
   console.time('Storage Upload');
-  const UPLOAD_CONCURRENCY = 35;
+  const UPLOAD_CONCURRENCY = 40;
   let uploadIndex = 0;
   let uploadedCount = 0;
   let uploadErrors = 0;
