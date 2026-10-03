@@ -1,11 +1,10 @@
-const CACHE_NAME = 'nowauth-pwa-v1';
+const CACHE_NAME = 'nowauth-pwa-v2';
 
 // Core shell assets to precache for reliable PWA installation
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/App%20Icon.png',
   '/apple-touch-icon.png',
   '/pwa-192x192.png',
   '/pwa-512x512.png',
