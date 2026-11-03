@@ -1,7 +1,7 @@
 {
-  "name": "NowAuth",
-  "short_name": "NowAuth",
-  "description": "Verify the authenticity of your products with NowAuth.",
+  "name": "Autentica ahora",
+  "short_name": "Autentica ahora",
+  "description": "Autentica ahora - Verificación de autenticidad de producto Indufar",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

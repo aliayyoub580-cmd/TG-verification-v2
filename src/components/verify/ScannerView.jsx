@@ -4,106 +4,67 @@ import {
   FiUploadCloud,
   FiEdit3,
   FiX,
-  FiCameraOff,
   FiCheckCircle,
   FiAlertCircle,
   FiSun,
   FiMaximize2,
 } from 'react-icons/fi';
-import { Flashlight } from 'lucide-react';
 
 const SCANNER_ELEMENT_ID = 'html5-qrcode-reader';
 
-// Rotating guidance cues matching the AuthNow reference system
+// Guidance cues for QR verification
 const GUIDANCE_LIST = [
   {
-    pill: 'Analyzing QR',
-    detail: 'Keep steady',
-    tip: 'Ensure the entire QR code is visible inside the frame.',
+    pill: 'Move a little closer',
+    detail: 'Move a little closer',
   },
   {
     pill: 'Move back slowly',
     detail: 'Move back a little more',
-    tip: 'Keep the phone 15–25 cm away so the camera can focus sharply.',
   },
   {
     pill: 'Hold steady',
-    detail: 'Keep steady',
-    tip: 'Avoid quick hand movements while the code is being read.',
+    detail: 'Hold steady',
   },
   {
     pill: 'Find good lighting',
     detail: 'Avoid reflections or heavy glare',
-    tip: 'Use the flashlight toggle if scanning in dim lighting.',
-  },
-  {
-    pill: 'Move closer slowly',
-    detail: 'Bring camera slightly closer',
-    tip: 'If the code is small on packaging, move in gradually.',
   },
 ];
 
 /**
- * Pixel-perfect AuthNow Shield & Wordmark Logo Component
- */
-function AuthNowLogo() {
-  return (
-    <div className="authnow-brand-header" aria-label="AuthNow">
-      {/* Dual contour shield with checkmark */}
-      <svg
-        className="authnow-shield-svg"
-        viewBox="0 0 52 52"
-        width="46"
-        height="46"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        {/* Outer shield in mint/green */}
-        <path
-          d="M26 4L8 11.5V23.5C8 35.2 15.7 46 26 48.8C36.3 46 44 35.2 44 23.5V11.5L26 4Z"
-          stroke="#4ade80"
-          strokeWidth="3.2"
-          strokeLinejoin="round"
-        />
-        {/* Inner shield contour in sky-cyan */}
-        <path
-          d="M26 8.5L12.5 14.5V23.5C12.5 32.5 18.2 41 26 43.5C33.8 41 39.5 32.5 39.5 23.5V14.5L26 8.5Z"
-          stroke="#38bdf8"
-          strokeWidth="1.8"
-          strokeLinejoin="round"
-          strokeOpacity="0.85"
-        />
-        {/* Inner green checkmark */}
-        <path
-          d="M18.5 25.5L23.5 30.5L33.5 19.5"
-          stroke="#4ade80"
-          strokeWidth="3.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-
-      {/* AuthNow stacked wordmark */}
-      <div className="authnow-text-block">
-        <span className="authnow-auth">auth</span>
-        <span className="authnow-now">
-          no<span className="authnow-w-accent">w</span>
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Flashlight / Torch Icon using lucide-react Flashlight
+ * Pixel-perfect Torch / Flashlight Icon matching Image 3 reference
+ * 45-degree angled flashlight with 3 light rays radiating top-right
  */
 function TorchIcon({ isOn }) {
   return (
-    <Flashlight
-      size={24}
-      strokeWidth={2.2}
-      color={isOn ? '#facc15' : '#ffffff'}
-    />
+    <svg
+      width="25"
+      height="25"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={isOn ? '#facc15' : '#ffffff'}
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{
+        filter: isOn ? 'drop-shadow(0 0 5px rgba(250, 204, 21, 0.9))' : 'none',
+        display: 'block',
+      }}
+    >
+      {/* Front rim / lens */}
+      <path d="M16 4l4 4" />
+      {/* Beveled head */}
+      <path d="M14 6l4 4-2 2-4-4 2-2z" />
+      {/* Flashlight barrel / handle */}
+      <path d="M12 8L5.5 14.5c-.8.8-.8 2 0 2.8l1.2 1.2c.8.8 2 .8 2.8 0L16 12" />
+      {/* Switch pill */}
+      <line x1="8.5" y1="13.5" x2="10" y2="12" />
+      {/* 3 Radiating Light Rays */}
+      <line x1="19" y1="2" x2="20" y2="1" />
+      <line x1="22" y1="5" x2="23.5" y2="3.5" />
+      <line x1="21.5" y1="8.5" x2="23" y2="9.5" />
+    </svg>
   );
 }
 
@@ -125,21 +86,13 @@ export default function ScannerView({
   const html5QrCodeRef = useRef(null);
   const fileInputRef = useRef(null);
   const isStoppingRef = useRef(false);
-  const [recognitionFailedModalOpen, setRecognitionFailedModalOpen] = useState(false);
-
-  // Authenticate button click handler:
-  // When user clicks the green "Authenticate" button on the scanner page:
-  // If no product QR is in view/recognized, show "Product not recognized" modal.
-  const handleAuthenticateClick = () => {
-    setRecognitionFailedModalOpen(true);
-  };
 
   // Rotate guidance tips periodically while scanning
   useEffect(() => {
     if (isValidating) return;
     const interval = setInterval(() => {
       setGuidanceIndex((prev) => (prev + 1) % GUIDANCE_LIST.length);
-    }, 3800);
+    }, 4200);
     return () => clearInterval(interval);
   }, [isValidating]);
 
@@ -163,56 +116,165 @@ export default function ScannerView({
     }
   }, []);
 
-  // Inspect track to check if torch/flashlight is supported
-  const checkTorchCapability = useCallback((scanner) => {
+  // Helper to reliably find the active video track from all available sources
+  const getActiveVideoTrack = useCallback(() => {
+    // 1. Try from html5QrCode renderedCamera instance
     try {
-      const videoElem = document.querySelector(`#${SCANNER_ELEMENT_ID} video`);
-      if (videoElem && videoElem.srcObject) {
-        const track = videoElem.srcObject.getVideoTracks()[0];
-        if (track && typeof track.getCapabilities === 'function') {
-          const caps = track.getCapabilities();
-          if (caps && caps.torch) {
-            setTorchAvailable(true);
-            return;
+      const renderedCamera = html5QrCodeRef.current?.renderedCamera;
+      if (renderedCamera) {
+        if (typeof renderedCamera.getFirstTrackOrFail === 'function') {
+          const t = renderedCamera.getFirstTrackOrFail();
+          if (t && t.readyState === 'live') return t;
+        }
+        if (renderedCamera.mediaStream) {
+          const tracks = renderedCamera.mediaStream.getVideoTracks();
+          if (tracks && tracks.length > 0 && tracks[0].readyState === 'live') {
+            return tracks[0];
           }
         }
       }
-      if (scanner && typeof scanner.getRunningTrackCameraCapabilities === 'function') {
-        const caps = scanner.getRunningTrackCameraCapabilities();
-        if (caps?.torchFeature()?.isSupported()) {
-          setTorchAvailable(true);
+    } catch (e) {
+      // Continue to next probe
+    }
+
+    // 2. Try from video element in DOM
+    try {
+      const videoElem = document.querySelector(`#${SCANNER_ELEMENT_ID} video`) ||
+                        document.querySelector('video');
+      if (videoElem && videoElem.srcObject && typeof videoElem.srcObject.getVideoTracks === 'function') {
+        const tracks = videoElem.srcObject.getVideoTracks();
+        if (tracks && tracks.length > 0 && tracks[0].readyState === 'live') {
+          return tracks[0];
         }
       }
     } catch (e) {
-      setTorchAvailable(false);
+      // Continue
     }
+
+    return null;
   }, []);
 
-  // Toggle torch
+  // Inspect track to check if torch/flashlight is supported
+  const checkTorchCapability = useCallback((scanner) => {
+    try {
+      // 1. Check via html5QrCode camera capabilities
+      if (scanner && typeof scanner.getRunningTrackCameraCapabilities === 'function') {
+        const caps = scanner.getRunningTrackCameraCapabilities();
+        const torch = caps?.torchFeature?.();
+        if (torch && typeof torch.isSupported === 'function' && torch.isSupported()) {
+          setTorchAvailable(true);
+          return;
+        }
+      }
+
+      // 2. Check via direct track getCapabilities
+      const track = getActiveVideoTrack();
+      if (track && typeof track.getCapabilities === 'function') {
+        const caps = track.getCapabilities();
+        if (caps && ('torch' in caps || caps.fillLightMode)) {
+          setTorchAvailable(true);
+          return;
+        }
+      }
+
+      // Default to available so user can try hardware toggle
+      setTorchAvailable(true);
+    } catch (e) {
+      setTorchAvailable(true);
+    }
+  }, [getActiveVideoTrack]);
+
+  // Robust multi-method flashlight / torch toggle
   const toggleTorch = async () => {
     const newTorchState = !torchOn;
-    try {
-      const videoElem = document.querySelector(`#${SCANNER_ELEMENT_ID} video`);
-      if (videoElem && videoElem.srcObject) {
-        const track = videoElem.srcObject.getVideoTracks()[0];
+    let success = false;
+
+    // Haptic feedback if supported on mobile
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      try {
+        navigator.vibrate(35);
+      } catch (e) {
+        // Ignore vibration error
+      }
+    }
+
+    // Attempt Method 1: html5QrCode torchFeature
+    if (html5QrCodeRef.current) {
+      try {
+        if (typeof html5QrCodeRef.current.getRunningTrackCameraCapabilities === 'function') {
+          const cameraCaps = html5QrCodeRef.current.getRunningTrackCameraCapabilities();
+          const torchFeature = cameraCaps?.torchFeature?.();
+          if (torchFeature) {
+            await torchFeature.apply(newTorchState);
+            success = true;
+          }
+        }
+      } catch (err) {
+        console.warn('[Torch] Method 1 (torchFeature) failed:', err);
+      }
+    }
+
+    // Attempt Method 2: Direct track applyConstraints with advanced torch
+    if (!success) {
+      try {
+        const track = getActiveVideoTrack();
         if (track && typeof track.applyConstraints === 'function') {
           await track.applyConstraints({
             advanced: [{ torch: newTorchState }],
           });
-          setTorchOn(newTorchState);
-          return;
+          success = true;
         }
+      } catch (err) {
+        console.warn('[Torch] Method 2 (track advanced torch) failed:', err);
       }
-      if (html5QrCodeRef.current) {
-        await html5QrCodeRef.current.applyVideoConstraints({
-          advanced: [{ torch: newTorchState }],
-        });
-        setTorchOn(newTorchState);
-      }
-    } catch (err) {
-      console.warn('Torch toggle failed on this device:', err);
-      setTorchOn(newTorchState); // visual toggle state feedback
     }
+
+    // Attempt Method 3: Direct track applyConstraints with plain torch
+    if (!success) {
+      try {
+        const track = getActiveVideoTrack();
+        if (track && typeof track.applyConstraints === 'function') {
+          await track.applyConstraints({
+            torch: newTorchState,
+          });
+          success = true;
+        }
+      } catch (err) {
+        console.warn('[Torch] Method 3 (track direct torch) failed:', err);
+      }
+    }
+
+    // Attempt Method 4: html5QrCode applyVideoConstraints
+    if (!success && html5QrCodeRef.current) {
+      try {
+        if (typeof html5QrCodeRef.current.applyVideoConstraints === 'function') {
+          await html5QrCodeRef.current.applyVideoConstraints({
+            advanced: [{ torch: newTorchState }],
+          });
+          success = true;
+        }
+      } catch (err) {
+        console.warn('[Torch] Method 4 (applyVideoConstraints) failed:', err);
+      }
+    }
+
+    // Attempt Method 5: ImageCapture / fillLightMode fallback
+    if (!success && typeof window !== 'undefined' && 'ImageCapture' in window) {
+      try {
+        const track = getActiveVideoTrack();
+        if (track) {
+          await track.applyConstraints({
+            advanced: [{ torch: newTorchState, fillLightMode: newTorchState ? 'torch' : 'off' }],
+          });
+          success = true;
+        }
+      } catch (err) {
+        console.warn('[Torch] Method 5 (ImageCapture fillLightMode) failed:', err);
+      }
+    }
+
+    // Always toggle visual state so UI responds immediately
+    setTorchOn(newTorchState);
   };
 
   // Initialize and start scanner on mount
@@ -246,7 +308,7 @@ export default function ScannerView({
     };
 
     const qrCodeErrorCallback = () => {
-      // Normal per-frame scan loop without match
+      // Normal continuous frame search without match
     };
 
     const config = {
@@ -270,7 +332,7 @@ export default function ScannerView({
       .then(() => {
         setCameraReady(true);
         setCameraError(null);
-        checkTorchCapability(html5QrCode);
+        setTimeout(() => checkTorchCapability(html5QrCode), 300);
       })
       .catch((err) => {
         console.warn('Camera start failed or permission denied:', err);
@@ -321,11 +383,17 @@ export default function ScannerView({
     });
   };
 
+  const handleStopClick = () => {
+    stopScannerSafe().then(() => {
+      onCancel();
+    });
+  };
+
   const currentGuidance = GUIDANCE_LIST[guidanceIndex] || GUIDANCE_LIST[0];
 
   return (
-    <div className="authnow-scanner-screen" role="main" aria-label="AuthNow Barcode Scanner">
-      {/* ── Top Bar: White Hamburger Menu Button + Centered AuthNow Brand Logo ── */}
+    <div className="authnow-scanner-screen" role="main" aria-label="Indufar Barcode Scanner">
+      {/* ── Top Bar: White Hamburger Menu Button + Centered INDUFAR Logo ── */}
       <header className="authnow-top-bar">
         {/* Left white rounded square hamburger menu button */}
         <button
@@ -345,57 +413,72 @@ export default function ScannerView({
           </svg>
         </button>
 
-        {/* Center Brand Logo from Interface Logo.png */}
-        <div className="authnow-brand-header">
+        {/* Center INDUFAR Brand Logo matching Image 3 reference */}
+        <div className="scanner-indufar-brand-wrap">
           <img
-            src="/Scanner%20Interface/Interface%20Logo.png"
-            alt="now auth"
-            className="authnow-brand-logo-img"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-              const fallback = document.getElementById('authnow-svg-fallback');
-              if (fallback) fallback.style.display = 'flex';
-            }}
+            src="/logo.png"
+            alt="INDUFAR"
+            className="scanner-indufar-logo-img"
           />
-          <div id="authnow-svg-fallback" style={{ display: 'none' }}>
-            <AuthNowLogo />
-          </div>
         </div>
 
         {/* Right spacing placeholder for perfect symmetry */}
         <div className="authnow-top-spacer" />
       </header>
 
-      {/* ── Center Camera Viewfinder Area ── */}
+      {/* ── Center Camera Viewfinder Area (Outer Card Frame) ── */}
       <section className="authnow-viewfinder-section">
         <div className="authnow-viewfinder-frame">
           {/* Live Camera Stream */}
           <div id={SCANNER_ELEMENT_ID} className="authnow-camera-mount" />
 
-          {/* In-Camera Floating Guidance Pill (e.g. "Move back slowly") */}
-          <div
-            className="authnow-inframe-guidance-pill"
-            onClick={handleCycleGuidance}
-            title="Tap to change guidance"
-          >
-            {isValidating ? 'Validating code...' : currentGuidance.pill}
+          {/* Loading state before camera starts */}
+          {!cameraReady && !cameraError && (
+            <div className="scanner-camera-loading-overlay">
+              <span>Loading... Please wait.</span>
+            </div>
+          )}
+
+          {/* Camera Permission / Error Fallback */}
+          {cameraError && (
+            <div className="authnow-camera-fallback">
+              <p className="authnow-fallback-text">{cameraError}</p>
+              <button
+                type="button"
+                className="authnow-fallback-btn"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                Upload packaging image
+              </button>
+            </div>
+          )}
+
+          {/* 4 Green Corner Reticle Brackets (matching Image 3) */}
+          <div className="scanner-reticle-overlay" aria-hidden="true">
+            <span className="reticle-corner top-left" />
+            <span className="reticle-corner top-right" />
+            <span className="reticle-corner bottom-left" />
+            <span className="reticle-corner bottom-right" />
           </div>
 
-          {/* Bottom-Right Torch / Flashlight FAB Button */}
+          {/* Bottom-Right Torch / Flashlight FAB Button overlapping viewfinder frame */}
           <button
             type="button"
             className={`authnow-torch-fab ${torchOn ? 'active' : ''}`}
             onClick={toggleTorch}
             aria-label="Toggle Flashlight"
             id="torchButton"
-            title="Toggle Flashlight"
+            title={torchAvailable ? 'Toggle Flashlight' : 'Flashlight'}
           >
             <TorchIcon isOn={torchOn} />
           </button>
         </div>
       </section>
 
-      {/* ── Middle Guidance Section (Below Camera) ── */}
+      {/* ── White Capsule Progress Bar (Directly below viewfinder, matching Image 3) ── */}
+      <div className="scanner-white-capsule-bar" aria-hidden="true" />
+
+      {/* ── Middle Guidance Section (Below Bar) ── */}
       <section className="authnow-guidance-section">
         {/* Circular Info Button (i) */}
         <button
@@ -408,7 +491,7 @@ export default function ScannerView({
           i
         </button>
 
-        {/* Dynamic Guidance Detail Text (e.g. "Move back a little more") */}
+        {/* Dynamic Guidance Detail Text (e.g. "Move a little closer") */}
         <h2
           className="authnow-guidance-detail-text"
           onClick={handleCycleGuidance}
@@ -419,52 +502,17 @@ export default function ScannerView({
         </h2>
       </section>
 
-      {/* ── Bottom Pinned Vibrant Green "Authenticate" Button ── */}
+      {/* ── Bottom Pinned Vibrant Green "Stop" Button (matching Image 3) ── */}
       <footer className="authnow-bottom-bar">
         <button
           type="button"
           className="authnow-stop-btn"
-          onClick={handleAuthenticateClick}
+          onClick={handleStopClick}
           id="scanner-stop-button"
         >
-          Authenticate
+          Stop
         </button>
       </footer>
-
-      {/* ── "Product not recognized" Modal (matching screenshot) ── */}
-      {recognitionFailedModalOpen && (
-        <div
-          className="authnow-modal-backdrop"
-          onClick={() => setRecognitionFailedModalOpen(false)}
-        >
-          <div
-            className="authnow-not-recognized-card"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-label="Product not recognized"
-          >
-            {/* Red Circle with Cross (X) icon */}
-            <div className="not-recognized-icon-circle">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" stroke="#f43f5e" strokeWidth="1.8" />
-                <line x1="15" y1="9" x2="9" y2="15" />
-                <line x1="9" y1="9" x2="15" y2="15" />
-              </svg>
-            </div>
-
-            <h3 className="not-recognized-title">Product not recognized</h3>
-            <p className="not-recognized-desc">This product could not be recognized.</p>
-
-            <button
-              type="button"
-              className="not-recognized-ok-btn"
-              onClick={() => setRecognitionFailedModalOpen(false)}
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* ── Hidden File Input for Image Scanning ── */}
       <input

@@ -2,31 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { FiX, FiChevronRight, FiDownload, FiShare } from 'react-icons/fi';
 
 /**
- * AppStoreIcon
- * Apple App Store 'A' compass logo
- */
-function AppStoreIcon({ size = 20, bg = '#8e8e93', style = {} }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill="none"
-      style={{ verticalAlign: 'middle', display: 'inline-block', flexShrink: 0, ...style }}
-    >
-      <rect width="24" height="24" rx="5.5" fill={bg} />
-      <path
-        d="M12 4.5L7.2 16.5M12 4.5L16.8 16.5M6 14H18"
-        stroke="#ffffff"
-        strokeWidth="2.2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-/**
  * ProductAuthPopup
  * iOS App Clip bottom sheet matching Screenshot.PNG with Image.jpg banner, App Icon.png footer,
  * and PWA install / open scanner actions.
@@ -35,7 +10,6 @@ export default function ProductAuthPopup({
   isOpen,
   onClose,
   onOpenScanner,
-  productInfo = null,
 }) {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isStandalone, setIsStandalone] = useState(false);
@@ -144,7 +118,7 @@ export default function ProductAuthPopup({
               <div className="popup-tooltip-content">
                 <FiShare className="popup-tooltip-icon" />
                 <span>
-                  To install: tap the browser <strong>Share</strong> button and select <strong>"Add to Home Screen"</strong>.
+                  To install: tap the browser <strong>Share</strong> button and select <strong>&quot;Add to Home Screen&quot;</strong>.
                 </span>
               </div>
               <button
@@ -158,13 +132,11 @@ export default function ProductAuthPopup({
             </div>
           )}
 
-          {/* Middle Action Row: "Authenticate now" + "Scan the product QR code" + Actions */}
+          {/* Middle Action Row: "Autentica ahora" + "Escanee el QR del producto" + Actions */}
           <div className="popup-action-row">
             <div className="popup-action-text">
-              <h3 className="popup-title">
-                {productInfo?.name ? `Authenticate ${productInfo.name}` : 'Authenticate now'}
-              </h3>
-              <p className="popup-subtitle">Scan the product QR code</p>
+              <h3 className="popup-title">Autentica ahora</h3>
+              <p className="popup-subtitle">Escanee el QR del producto</p>
             </div>
 
             <div className="popup-actions-col">

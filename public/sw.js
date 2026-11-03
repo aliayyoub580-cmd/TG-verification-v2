@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nowauth-pwa-v2';
+const CACHE_NAME = 'autentica-ahora-v3';
 
 // Core shell assets to precache for reliable PWA installation
 const PRECACHE_ASSETS = [

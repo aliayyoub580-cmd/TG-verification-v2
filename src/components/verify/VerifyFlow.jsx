@@ -74,7 +74,9 @@ function extractVerificationCode(input) {
       const paramCode = parsed.searchParams.get('code');
       if (paramCode) return paramCode.trim();
     }
-  } catch (e) {}
+  } catch (e) {
+    // Ignore URL parse error and fallback to regex
+  }
 
   const match = str.match(/[?&]code=([^&#\s]+)/i);
   if (match) {
@@ -142,7 +144,7 @@ function extractVerificationCode(input) {
           <div className="landing-preview-icon">
             <RiShieldCheckFill />
           </div>
-          <h1 className="landing-preview-title">Indufar Verification</h1>
+          <h1 className="landing-preview-title">Autentica ahora</h1>
           <p className="landing-preview-desc">
             {urlCode
               ? `Verification request for product code: ${urlCode}`
@@ -182,11 +184,11 @@ function extractVerificationCode(input) {
                   <path d="M4 6H20M4 12H20M4 18H20" stroke="#2e2a72" strokeWidth="2.8" strokeLinecap="round" />
                 </svg>
               </div>
-              <div className="authnow-brand-header">
+              <div className="scanner-indufar-brand-wrap">
                 <img
-                  src="/Scanner%20Interface/Interface%20Logo.png"
-                  alt="now auth"
-                  className="authnow-brand-logo-img"
+                  src="/logo.png"
+                  alt="INDUFAR"
+                  className="scanner-indufar-logo-img"
                 />
               </div>
               <div className="authnow-top-spacer" />

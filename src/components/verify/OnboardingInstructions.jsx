@@ -1,41 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 /**
  * OnboardingInstructions
- * Displays the 3-step instructions modal with animated progress bar.
- * When the progress completes (100%), the progress bar transitions to
- * an "Authenticate" button. Clicking "Authenticate" invokes onStartScan.
+ * Displays the 3-step instructions modal matching Image 2 exactly:
+ * - 1. Scan your product (with QR icon)
+ * - 2. Find good lighting
+ * - 3. Adjust the distance
+ * - Agreement checkbox with Privacy Policy link
+ * - Authenticate button (disabled grey when unchecked, active when checked)
  */
 export default function OnboardingInstructions({ onStartScan }) {
-  const [progress, setProgress] = useState(0);
-  const [isCompleted, setIsCompleted] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
-  useEffect(() => {
-    // Smooth progress simulation from 0 to 100%
-    const duration = 2400; // ~2.4s
-    const stepTime = 40;
-    const totalSteps = duration / stepTime;
-    let currentStep = 0;
-
-    const timer = setInterval(() => {
-      currentStep++;
-      const currentPct = Math.min(Math.round((currentStep / totalSteps) * 100), 100);
-      setProgress(currentPct);
-
-      if (currentStep >= totalSteps) {
-        clearInterval(timer);
-        setTimeout(() => {
-          setIsCompleted(true);
-        }, 200);
-      }
-    }, stepTime);
-
-    return () => clearInterval(timer);
-  }, []);
+  const handleAuthenticate = () => {
+    if (agreed) {
+      onStartScan();
+    }
+  };
 
   return (
     <div className="onboarding-overlay">
-      {/* Background scrim showing the scanner background behind it */}
       <div className="onboarding-card">
         {/* Step 1 */}
         <div className="onboarding-step-row">
@@ -46,8 +31,8 @@ export default function OnboardingInstructions({ onStartScan }) {
             {/* Authentic Light-Grey QR Code Vector matching reference */}
             <div className="onboarding-qr-wrap" aria-hidden="true">
               <svg
-                width="64"
-                height="64"
+                width="62"
+                height="62"
                 viewBox="0 0 70 70"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -119,32 +104,91 @@ export default function OnboardingInstructions({ onStartScan }) {
           </div>
         </div>
 
-        {/* Bottom Section: Progress bar or Authenticate button */}
+        {/* Agreement Checkbox Box (matching Image 2) */}
+        <div className="onboarding-agreement-box">
+          <label className="onboarding-agreement-label">
+            <input
+              type="checkbox"
+              className="onboarding-checkbox-input"
+              checked={agreed}
+              onChange={(e) => setAgreed(e.target.checked)}
+              id="privacy-checkbox"
+            />
+            <span className="onboarding-agreement-text">
+              I agree to the{' '}
+              <button
+                type="button"
+                className="onboarding-policy-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowPrivacyModal(true);
+                }}
+              >
+                Privacy Policy
+              </button>{' '}
+              (camera and location use for QR validation).
+            </span>
+          </label>
+        </div>
+
+        {/* Bottom Action: Authenticate Button (disabled grey until agreed) */}
         <div className="onboarding-bottom-action">
-          {!isCompleted ? (
-            <div className="onboarding-progress-container">
-              <div className="onboarding-progress-text">
-                Loading... Please wait. {progress}%
-              </div>
-              <div className="onboarding-progress-track">
-                <div
-                  className="onboarding-progress-fill"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            </div>
-          ) : (
-            <button
-              type="button"
-              className="onboarding-auth-btn"
-              onClick={onStartScan}
-              id="onboarding-authenticate-button"
-            >
-              Authenticate
-            </button>
-          )}
+          <button
+            type="button"
+            className={`onboarding-auth-btn ${!agreed ? 'is-disabled' : 'is-active'}`}
+            disabled={!agreed}
+            onClick={handleAuthenticate}
+            id="onboarding-authenticate-button"
+          >
+            Authenticate
+          </button>
         </div>
       </div>
+
+      {/* Privacy Policy Modal */}
+      {showPrivacyModal && (
+        <div
+          className="authnow-modal-backdrop"
+          onClick={() => setShowPrivacyModal(false)}
+          style={{ zIndex: 120 }}
+        >
+          <div
+            className="authnow-modal-card"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-label="Privacy Policy"
+          >
+            <div className="authnow-modal-header">
+              <div className="authnow-modal-title-row">
+                <h3>Privacy Policy & Consent</h3>
+              </div>
+              <button
+                type="button"
+                className="authnow-modal-close"
+                onClick={() => setShowPrivacyModal(false)}
+              >
+                ×
+              </button>
+            </div>
+            <p className="authnow-modal-subtext" style={{ fontSize: '13.5px', lineHeight: '1.5', color: '#475569' }}>
+              <strong>Camera Access:</strong> Camera video is processed locally in real-time inside your browser solely to detect and decode security QR codes on Indufar packaging. No video feeds or frames are uploaded or saved.
+              <br /><br />
+              <strong>Location Use:</strong> Approximate regional location is used strictly to verify authentic product distribution zones and detect counterfeit batches.
+            </p>
+            <button
+              type="button"
+              className="authnow-modal-action-btn"
+              onClick={() => {
+                setAgreed(true);
+                setShowPrivacyModal(false);
+              }}
+            >
+              I Understand & Agree
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
