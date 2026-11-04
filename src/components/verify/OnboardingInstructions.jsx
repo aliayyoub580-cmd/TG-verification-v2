@@ -31,8 +31,8 @@ export default function OnboardingInstructions({ onStartScan }) {
             {/* Authentic Light-Grey QR Code Vector matching reference */}
             <div className="onboarding-qr-wrap" aria-hidden="true">
               <svg
-                width="62"
-                height="62"
+                width="50"
+                height="50"
                 viewBox="0 0 70 70"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -126,7 +126,8 @@ export default function OnboardingInstructions({ onStartScan }) {
                 }}
               >
                 Privacy Policy
-              </button>{' '}
+              </button>
+              <br />
               (camera and location use for QR validation).
             </span>
           </label>

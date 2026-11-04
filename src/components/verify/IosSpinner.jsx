@@ -26,3 +26,4 @@ export default function IosSpinner({ size = 42, color = '#ffffff' }) {
     </svg>
   );
 }
+
