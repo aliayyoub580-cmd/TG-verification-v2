@@ -31,8 +31,8 @@ export default function OnboardingInstructions({ onStartScan }) {
             {/* Authentic Light-Grey QR Code Vector matching reference */}
             <div className="onboarding-qr-wrap" aria-hidden="true">
               <svg
-                width="58"
-                height="58"
+                width="66"
+                height="66"
                 viewBox="0 0 70 70"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
