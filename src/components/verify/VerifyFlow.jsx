@@ -53,13 +53,47 @@ export default function VerifyFlow() {
     return () => clearTimeout(timer);
   }, [isDirectScan]);
 
-  // Handler: User taps "Open" on the bottom sheet -> show onboarding
+  // Handler: User taps "Open" on the bottom sheet -> show onboarding or direct scan
   const handleOpenScanner = () => {
+    try {
+      const alreadyGranted =
+        localStorage.getItem('tg_camera_permission_granted') === 'true';
+      if (alreadyGranted) {
+        handleStartScanning();
+        return;
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
     setFlowState('onboarding');
   };
 
   // Handler: User finishes onboarding and taps "Authenticate" -> show loading screen for 1s
   const handleStartScanning = () => {
+    // Synchronously request camera access within the direct user tap gesture.
+    // This establishes trusted User Activation in iOS Safari WebKit,
+    // allowing iOS to save the permission permanently for all next times!
+    if (
+      typeof navigator !== 'undefined' &&
+      navigator.mediaDevices &&
+      typeof navigator.mediaDevices.getUserMedia === 'function'
+    ) {
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: { ideal: 'environment' } } })
+        .then((stream) => {
+          try {
+            localStorage.setItem('tg_camera_permission_granted', 'true');
+          } catch (e) {
+            // ignore
+          }
+          // Temporarily hold stream so ScannerView attaches cleanly
+          window.__indufarPrewarmedStream = stream;
+        })
+        .catch((err) => {
+          console.warn('Pre-warming camera permission on user gesture:', err);
+        });
+    }
+
     setFlowState('loading');
     if (loadingTimerRef.current) {
       clearTimeout(loadingTimerRef.current);

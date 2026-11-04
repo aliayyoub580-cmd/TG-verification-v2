@@ -322,6 +322,18 @@ export default function ScannerView({
       aspectRatio: 1.25,
     };
 
+    // Release any pre-warmed stream tracks before html5QrCode grabs hardware
+    if (window.__indufarPrewarmedStream) {
+      try {
+        window.__indufarPrewarmedStream
+          .getTracks()
+          .forEach((track) => track.stop());
+      } catch (e) {
+        // ignore
+      }
+      window.__indufarPrewarmedStream = null;
+    }
+
     html5QrCode
       .start(
         { facingMode: 'environment' },
@@ -332,6 +344,11 @@ export default function ScannerView({
       .then(() => {
         setCameraReady(true);
         setCameraError(null);
+        try {
+          localStorage.setItem('tg_camera_permission_granted', 'true');
+        } catch (e) {
+          // ignore
+        }
         setTimeout(() => checkTorchCapability(html5QrCode), 300);
       })
       .catch((err) => {
@@ -443,6 +460,18 @@ export default function ScannerView({
           {cameraError && (
             <div className="authnow-camera-fallback">
               <p className="authnow-fallback-text">{cameraError}</p>
+              <p
+                style={{
+                  fontSize: '12px',
+                  color: '#94a3b8',
+                  margin: '4px 0 12px 0',
+                  textAlign: 'center',
+                  maxWidth: '280px',
+                  lineHeight: '1.4',
+                }}
+              >
+                On iPhone: Tap the <strong>aA</strong> icon in the Safari address bar → <strong>Website Settings</strong> → <strong>Camera</strong> → <strong>Allow</strong> to never be asked again.
+              </p>
               <button
                 type="button"
                 className="authnow-fallback-btn"
