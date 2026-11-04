@@ -1267,7 +1267,7 @@
   position: relative;
   width: 100%;
   max-width: 350px;
-  aspect-ratio: 1.15 / 1;
+  aspect-ratio: 1.25 / 1;
   background: #505050;
   border-radius: 20px;
   border: 2px solid rgba(255, 255, 255, 0.25);
@@ -1293,6 +1293,10 @@
   border-radius: 18px;
 }
 
+#html5-qrcode-reader #qr-shaded-region {
+  display: none !important;
+}
+
 /* Centered loading overlay before camera feed loads */
 .scanner-camera-loading-overlay {
   position: absolute;
@@ -1304,52 +1308,90 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 6;
+  z-index: 10;
 }
 
-/* 4 Green Corner Reticle Brackets matching Image 3 */
-.scanner-reticle-overlay {
+/* Central QR Scanning Window: 67% visible bright area, with remaining 33% darkened */
+.scanner-scan-window {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 67%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
   pointer-events: none;
   z-index: 5;
 }
 
-.scanner-reticle-overlay .reticle-corner {
+/* 4 Green Corner Reticle Brackets framing the 67% bright scanning window */
+.scanner-scan-window .reticle-corner {
   position: absolute;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-color: #22c55e;
   border-style: solid;
   pointer-events: none;
 }
 
-.scanner-reticle-overlay .reticle-corner.top-left {
-  top: 10px;
-  left: 10px;
+.scanner-scan-window .reticle-corner.top-left {
+  top: -2px;
+  left: -2px;
   border-width: 3.5px 0 0 3.5px;
-  border-top-left-radius: 14px;
+  border-top-left-radius: 20px;
 }
 
-.scanner-reticle-overlay .reticle-corner.top-right {
-  top: 10px;
-  right: 10px;
+.scanner-scan-window .reticle-corner.top-right {
+  top: -2px;
+  right: -2px;
   border-width: 3.5px 3.5px 0 0;
-  border-top-right-radius: 14px;
+  border-top-right-radius: 20px;
 }
 
-.scanner-reticle-overlay .reticle-corner.bottom-left {
-  bottom: 10px;
-  left: 10px;
+.scanner-scan-window .reticle-corner.bottom-left {
+  bottom: -2px;
+  left: -2px;
   border-width: 0 0 3.5px 3.5px;
-  border-bottom-left-radius: 14px;
+  border-bottom-left-radius: 20px;
 }
 
-.scanner-reticle-overlay .reticle-corner.bottom-right {
-  bottom: 10px;
-  right: 10px;
+.scanner-scan-window .reticle-corner.bottom-right {
+  bottom: -2px;
+  right: -2px;
   border-width: 0 3.5px 3.5px 0;
-  border-bottom-right-radius: 14px;
+  border-bottom-right-radius: 20px;
+}
+
+/* Dark Translucent Horizontal Strip across viewfinder with "Focus the QR code" */
+.scanner-focus-strip {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  height: 42px;
+  background: rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.scanner-focus-text {
+  color: #86efac;
+  font-size: 16.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0 16px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* Bottom-Right Torch / Flashlight FAB Button */

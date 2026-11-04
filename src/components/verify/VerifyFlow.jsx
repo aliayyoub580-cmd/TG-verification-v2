@@ -211,7 +211,17 @@ function extractVerificationCode(input) {
               <div className="authnow-top-spacer" />
             </header>
             <div className="authnow-viewfinder-section">
-              <div className="authnow-viewfinder-frame" />
+              <div className="authnow-viewfinder-frame">
+                <div className="scanner-scan-window" aria-hidden="true">
+                  <span className="reticle-corner top-left" />
+                  <span className="reticle-corner top-right" />
+                  <span className="reticle-corner bottom-left" />
+                  <span className="reticle-corner bottom-right" />
+                </div>
+                <div className="scanner-focus-strip" aria-hidden="true">
+                  <span className="scanner-focus-text">Focus the QR code</span>
+                </div>
+              </div>
             </div>
           </div>
 

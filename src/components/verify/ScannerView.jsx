@@ -453,12 +453,18 @@ export default function ScannerView({
             </div>
           )}
 
-          {/* 4 Green Corner Reticle Brackets (matching Image 3) */}
-          <div className="scanner-reticle-overlay" aria-hidden="true">
+          {/* Central QR Scanning Window: 67% bright area with remaining 33% darkened */}
+          <div className="scanner-scan-window" aria-hidden="true">
+            {/* 4 Green Corner Reticle Brackets framing 67% scanning window */}
             <span className="reticle-corner top-left" />
             <span className="reticle-corner top-right" />
             <span className="reticle-corner bottom-left" />
             <span className="reticle-corner bottom-right" />
+          </div>
+
+          {/* Dark Translucent Horizontal Strip with Centered Bold Green Text */}
+          <div className="scanner-focus-strip" aria-hidden="true">
+            <span className="scanner-focus-text">Focus the QR code</span>
           </div>
 
           {/* Bottom-Right Torch / Flashlight FAB Button overlapping viewfinder frame */}
