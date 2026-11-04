@@ -91,7 +91,9 @@ export default function OnboardingInstructions({ onStartScan }) {
           <div className="onboarding-step-num">2</div>
           <div className="onboarding-step-body">
             <h3 className="onboarding-step-title">Find good lighting</h3>
-            <p className="onboarding-step-desc">Make sure you are in a well-lit place</p>
+            <p className="onboarding-step-desc">
+              Make sure you are in a well-lit<br />place
+            </p>
           </div>
         </div>
 
@@ -100,7 +102,9 @@ export default function OnboardingInstructions({ onStartScan }) {
           <div className="onboarding-step-num">3</div>
           <div className="onboarding-step-body">
             <h3 className="onboarding-step-title">Adjust the distance</h3>
-            <p className="onboarding-step-desc">Move closer and farther away as instructed</p>
+            <p className="onboarding-step-desc">
+              Move closer and farther away<br />as instructed
+            </p>
           </div>
         </div>
 
