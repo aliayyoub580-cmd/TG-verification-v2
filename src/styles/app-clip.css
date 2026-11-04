@@ -2397,3 +2397,33 @@
 .onboarding-auth-btn.is-active:active {
   transform: scale(0.985);
 }
+
+/* ── Full-Screen Loading Screen (1s on Authenticate click matching reference) ── */
+.authnow-fullscreen-loading {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #69686d;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ios-spoke-spinner {
+  display: block;
+  animation: iosSpinnerRotate 0.8s steps(8) infinite;
+}
+
+@keyframes iosSpinnerRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

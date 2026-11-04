@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import ProductAuthPopup from './ProductAuthPopup.jsx';
 import OnboardingInstructions from './OnboardingInstructions.jsx';
+import IosSpinner from './IosSpinner.jsx';
 import ScannerView from './ScannerView.jsx';
 import ResultView from './ResultView.jsx';
 import { verifyAPI } from '../../services/api.js';
@@ -24,11 +25,21 @@ export default function VerifyFlow() {
     searchParams.get('mode') === 'scan' ||
     searchParams.get('scan') === '1';
 
-  // State machine: 'idle' | 'popup' | 'onboarding' | 'scanning' | 'result'
+  // State machine: 'idle' | 'popup' | 'onboarding' | 'loading' | 'scanning' | 'result'
   const [flowState, setFlowState] = useState(isDirectScan ? 'scanning' : 'idle');
   const [isValidating, setIsValidating] = useState(false);
   const [scannedCode, setScannedCode] = useState(urlCode || '');
   const [verificationResult, setVerificationResult] = useState(null);
+  const loadingTimerRef = useRef(null);
+
+  // Clean up loading timer on unmount
+  useEffect(() => {
+    return () => {
+      if (loadingTimerRef.current) {
+        clearTimeout(loadingTimerRef.current);
+      }
+    };
+  }, []);
 
   // Animate popup on initial page load if not on direct scan
   useEffect(() => {
@@ -47,9 +58,15 @@ export default function VerifyFlow() {
     setFlowState('onboarding');
   };
 
-  // Handler: User finishes onboarding and taps "Authenticate"
+  // Handler: User finishes onboarding and taps "Authenticate" -> show loading screen for 1s
   const handleStartScanning = () => {
-    setFlowState('scanning');
+    setFlowState('loading');
+    if (loadingTimerRef.current) {
+      clearTimeout(loadingTimerRef.current);
+    }
+    loadingTimerRef.current = setTimeout(() => {
+      setFlowState('scanning');
+    }, 1000);
   };
 
   // Handler: User dismisses bottom sheet with X or scrim click
@@ -199,6 +216,13 @@ function extractVerificationCode(input) {
           </div>
 
           <OnboardingInstructions onStartScan={handleStartScanning} />
+        </div>
+      )}
+
+      {/* ── 1.8. Full-Screen Loading Screen (1s on Authenticate click) ── */}
+      {flowState === 'loading' && (
+        <div className="authnow-fullscreen-loading" role="status" aria-label="Loading scanner">
+          <IosSpinner size={42} />
         </div>
       )}
 
