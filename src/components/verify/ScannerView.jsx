@@ -12,23 +12,15 @@ import {
 
 const SCANNER_ELEMENT_ID = 'html5-qrcode-reader';
 
-// Guidance cues for QR verification
-const GUIDANCE_LIST = [
+// Paired viewfinder strip & guidance cues for QR verification
+const SCANNER_GUIDANCE_CUES = [
   {
-    pill: 'Move a little closer',
-    detail: 'Move a little closer',
+    stripText: 'Focus the QR code',
+    bottomText: 'Move back a little more',
   },
   {
-    pill: 'Move back slowly',
-    detail: 'Move back a little more',
-  },
-  {
-    pill: 'Hold steady',
-    detail: 'Hold steady',
-  },
-  {
-    pill: 'Find good lighting',
-    detail: 'Avoid reflections or heavy glare',
+    stripText: 'Move closer',
+    bottomText: 'Move a little closer',
   },
 ];
 
@@ -91,14 +83,14 @@ export default function ScannerView({
   useEffect(() => {
     if (isValidating) return;
     const interval = setInterval(() => {
-      setGuidanceIndex((prev) => (prev + 1) % GUIDANCE_LIST.length);
+      setGuidanceIndex((prev) => (prev + 1) % SCANNER_GUIDANCE_CUES.length);
     }, 4200);
     return () => clearInterval(interval);
   }, [isValidating]);
 
   // Handle manual next guidance trigger (e.g. clicking guidance text)
   const handleCycleGuidance = () => {
-    setGuidanceIndex((prev) => (prev + 1) % GUIDANCE_LIST.length);
+    setGuidanceIndex((prev) => (prev + 1) % SCANNER_GUIDANCE_CUES.length);
   };
 
   // Safe camera stop helper
@@ -406,7 +398,8 @@ export default function ScannerView({
     });
   };
 
-  const currentGuidance = GUIDANCE_LIST[guidanceIndex] || GUIDANCE_LIST[0];
+  const currentGuidance =
+    SCANNER_GUIDANCE_CUES[guidanceIndex] || SCANNER_GUIDANCE_CUES[0];
 
   return (
     <div className="authnow-scanner-screen" role="main" aria-label="Indufar Barcode Scanner">
@@ -493,7 +486,7 @@ export default function ScannerView({
 
           {/* Dark Translucent Horizontal Strip with Centered Bold Green Text */}
           <div className="scanner-focus-strip" aria-hidden="true">
-            <span className="scanner-focus-text">Focus the QR code</span>
+            <span className="scanner-focus-text">{currentGuidance.stripText}</span>
           </div>
 
           {/* Bottom-Right Torch / Flashlight FAB Button overlapping viewfinder frame */}
@@ -526,14 +519,14 @@ export default function ScannerView({
           i
         </button>
 
-        {/* Dynamic Guidance Detail Text (e.g. "Move a little closer") */}
+        {/* Dynamic Guidance Detail Text (paired with viewfinder strip) */}
         <h2
           className="authnow-guidance-detail-text"
           onClick={handleCycleGuidance}
         >
           {isValidating
             ? 'Checking authenticity with registry...'
-            : currentGuidance.detail}
+            : currentGuidance.bottomText}
         </h2>
       </section>
 
