@@ -53,18 +53,8 @@ export default function VerifyFlow() {
     return () => clearTimeout(timer);
   }, [isDirectScan]);
 
-  // Handler: User taps "Open" on the bottom sheet -> show onboarding or direct scan
+  // Handler: User taps "Open" on the bottom sheet -> always show onboarding popup
   const handleOpenScanner = () => {
-    try {
-      const alreadyGranted =
-        localStorage.getItem('tg_camera_permission_granted') === 'true';
-      if (alreadyGranted) {
-        handleStartScanning();
-        return;
-      }
-    } catch (e) {
-      // ignore storage errors
-    }
     setFlowState('onboarding');
   };
 
