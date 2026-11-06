@@ -1585,6 +1585,124 @@
   }
 }
 
+/* ── Counterfeit Product Disclaimer Modal (Pixel-Perfect Match to Screenshot) ── */
+.counterfeit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(10, 12, 30, 0.65);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+  animation: counterfeitBackdropFade 0.22s ease-out forwards;
+}
+
+@keyframes counterfeitBackdropFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.counterfeit-modal-card {
+  width: 100%;
+  max-width: 435px;
+  background: #ffffff;
+  border-radius: 26px;
+  padding: 34px 14px 26px 14px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  animation: counterfeitModalPop 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes counterfeitModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.counterfeit-icon-wrap {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.counterfeit-modal-title {
+  margin: 0 0 14px 0;
+  font-size: 22.5px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif;
+  text-align: center;
+}
+
+.counterfeit-modal-desc {
+  width: 100%;
+  padding: 0;
+  margin: 0 auto 26px auto;
+  font-size: clamp(12.5px, 3.6vw, 14.5px);
+  font-weight: 400;
+  color: #4b5563;
+  line-height: 1.45;
+  text-align: center;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, sans-serif;
+}
+
+.counterfeit-line {
+  display: block;
+  white-space: nowrap;
+}
+
+.counterfeit-modal-btn {
+  width: 100%;
+  height: 52px;
+  border-radius: 9999px;
+  font-size: 17.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border: none;
+  color: #ffffff;
+  background: linear-gradient(90deg, #3d81f2 0%, #a755f8 100%);
+  box-shadow: 0 4px 16px rgba(61, 129, 242, 0.35);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, sans-serif;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.counterfeit-modal-btn:hover {
+  box-shadow: 0 6px 20px rgba(61, 129, 242, 0.45);
+  transform: translateY(-1px);
+}
+
+.counterfeit-modal-btn:active {
+  transform: scale(0.985);
+}
+
 /* ── "Product not recognized" Card (Matching Screenshot 3) ── */
 .authnow-not-recognized-card {
   width: 100%;

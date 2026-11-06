@@ -9,6 +9,7 @@ import {
   FiSun,
   FiMaximize2,
 } from 'react-icons/fi';
+import CounterfeitModal from './CounterfeitModal.jsx';
 
 const SCANNER_ELEMENT_ID = 'html5-qrcode-reader';
 
@@ -62,8 +63,10 @@ function TorchIcon({ isOn }) {
 
 export default function ScannerView({
   onScanSuccess,
-  onCancel,
+  onCancel: _onCancel,
   isValidating = false,
+  isCounterfeitOpen = false,
+  onCloseCounterfeit,
 }) {
   const [cameraReady, setCameraReady] = useState(false);
   const [cameraError, setCameraError] = useState(null);
@@ -74,10 +77,26 @@ export default function ScannerView({
   const [guidanceModalOpen, setGuidanceModalOpen] = useState(false);
   const [manualModalOpen, setManualModalOpen] = useState(false);
   const [manualCodeInput, setManualCodeInput] = useState('');
+  const [internalCounterfeitOpen, setInternalCounterfeitOpen] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const html5QrCodeRef = useRef(null);
   const fileInputRef = useRef(null);
   const isStoppingRef = useRef(false);
+
+  // When external counterfeit alert opens (e.g. invalid QR scan), pause the camera
+  useEffect(() => {
+    if (isCounterfeitOpen) {
+      setIsPaused(true);
+      if (html5QrCodeRef.current?.isScanning) {
+        try {
+          html5QrCodeRef.current.pause(true);
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+  }, [isCounterfeitOpen]);
 
   // Rotate guidance tips periodically while scanning
   useEffect(() => {
@@ -392,10 +411,51 @@ export default function ScannerView({
     });
   };
 
-  const handleStopClick = () => {
-    stopScannerSafe().then(() => {
-      onCancel();
-    });
+  // When user clicks the bottom button (Stop / Retry)
+  const handleBottomButtonClick = () => {
+    if (isPaused) {
+      // If paused, clicking "Retry" resumes camera scanning
+      if (html5QrCodeRef.current) {
+        try {
+          html5QrCodeRef.current.resume();
+        } catch (e) {
+          // ignore
+        }
+      }
+      setIsPaused(false);
+      setInternalCounterfeitOpen(false);
+      if (onCloseCounterfeit) {
+        onCloseCounterfeit();
+      }
+    } else {
+      // User clicked "Stop": show Counterfeit Disclaimer popup and pause camera
+      setInternalCounterfeitOpen(true);
+      setIsPaused(true);
+      if (html5QrCodeRef.current?.isScanning) {
+        try {
+          html5QrCodeRef.current.pause(true);
+        } catch (e) {
+          // ignore
+        }
+      }
+    }
+  };
+
+  // When user clicks "Understood" on the Counterfeit alert
+  const handleCloseCounterfeitModal = () => {
+    setInternalCounterfeitOpen(false);
+    if (onCloseCounterfeit) {
+      onCloseCounterfeit();
+    }
+    // Resume camera scanning so user can scan another code immediately
+    if (html5QrCodeRef.current) {
+      try {
+        html5QrCodeRef.current.resume();
+        setIsPaused(false);
+      } catch (e) {
+        // ignore
+      }
+    }
   };
 
   const currentGuidance =
@@ -530,17 +590,23 @@ export default function ScannerView({
         </h2>
       </section>
 
-      {/* ── Bottom Pinned Vibrant Green "Stop" Button (matching Image 3) ── */}
+      {/* ── Bottom Pinned Vibrant Green "Stop" / "Retry" Button (matching Image 3) ── */}
       <footer className="authnow-bottom-bar">
         <button
           type="button"
           className="authnow-stop-btn"
-          onClick={handleStopClick}
+          onClick={handleBottomButtonClick}
           id="scanner-stop-button"
         >
-          Stop
+          {isPaused ? 'Retry' : 'Stop'}
         </button>
       </footer>
+
+      {/* ── Counterfeit Product Disclaimer Modal ── */}
+      <CounterfeitModal
+        isOpen={internalCounterfeitOpen || isCounterfeitOpen}
+        onClose={handleCloseCounterfeitModal}
+      />
 
       {/* ── Hidden File Input for Image Scanning ── */}
       <input

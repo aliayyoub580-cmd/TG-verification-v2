@@ -30,6 +30,7 @@ export default function VerifyFlow() {
   const [isValidating, setIsValidating] = useState(false);
   const [scannedCode, setScannedCode] = useState(urlCode || '');
   const [verificationResult, setVerificationResult] = useState(null);
+  const [counterfeitAlertOpen, setCounterfeitAlertOpen] = useState(false);
   const loadingTimerRef = useRef(null);
 
   // Clean up loading timer on unmount
@@ -144,23 +145,22 @@ export default function VerifyFlow() {
 
       // Brief delay for smooth animation transition
       setTimeout(() => {
-        setVerificationResult(data);
-        setIsValidating(false);
-        setFlowState('result');
+        if (data.authentic) {
+          setVerificationResult(data);
+          setIsValidating(false);
+          setFlowState('result');
+        } else {
+          // Code does NOT match in the database -> Show Counterfeit disclaimer popup!
+          setIsValidating(false);
+          setCounterfeitAlertOpen(true);
+        }
       }, 500);
     } catch (err) {
       console.error('Verification error:', err);
-      const errData = err.response?.data;
       setTimeout(() => {
-        setVerificationResult({
-          authentic: false,
-          serialNumber: cleanCode,
-          message:
-            errData?.message ||
-            'Verification service temporarily unavailable or code invalid. Please try again.',
-        });
+        // Backend error, not found, or code does not match -> Show Counterfeit disclaimer popup!
         setIsValidating(false);
-        setFlowState('result');
+        setCounterfeitAlertOpen(true);
       }, 500);
     }
   };
@@ -169,6 +169,7 @@ export default function VerifyFlow() {
   const handleScanAnother = () => {
     setScannedCode('');
     setVerificationResult(null);
+    setCounterfeitAlertOpen(false);
     setFlowState('scanning');
   };
 
@@ -266,6 +267,8 @@ export default function VerifyFlow() {
           onScanSuccess={handleScanSuccess}
           onCancel={handleCancelScanner}
           isValidating={isValidating}
+          isCounterfeitOpen={counterfeitAlertOpen}
+          onCloseCounterfeit={() => setCounterfeitAlertOpen(false)}
         />
       )}
 
