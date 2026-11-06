@@ -532,7 +532,7 @@ export default function ScannerView({
 
       {/* ── Center Camera Viewfinder Area (Outer Card Frame) ── */}
       <section className="authnow-viewfinder-section">
-        <div className="authnow-viewfinder-frame">
+        <div className={`authnow-viewfinder-frame ${isAuthenticTransition ? 'is-authentic-transition' : ''}`}>
           {/* Live Camera Stream */}
           <div id={SCANNER_ELEMENT_ID} className="authnow-camera-mount" />
 
