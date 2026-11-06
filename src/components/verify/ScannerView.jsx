@@ -63,28 +63,28 @@ function TorchIcon({ isOn }) {
 }
 
 /**
- * Shield Icon with Checkmark matching authentic transition state
+ * Circle Icon with Checkmark matching authentic transition state
  */
-function AuthenticShieldIcon({ size = 52 }) {
+function AuthenticCircleCheckIcon({ size = 52 }) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 56 60"
+      viewBox="0 0 56 56"
       fill="none"
       style={{ display: 'block', margin: '0 auto' }}
       aria-hidden="true"
     >
-      <path
-        d="M28 5 C40 5 48 13 48 27 C48 41 36 51 28 55 C20 51 8 41 8 27 C8 13 16 5 28 5 Z"
+      <circle
+        cx="28"
+        cy="28"
+        r="24"
         stroke="#c4cae0"
         strokeWidth="3.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
         fill="rgba(255, 255, 255, 0.05)"
       />
       <path
-        d="M20 28 L25.5 35 L36 22"
+        d="M19 28.5 L25 34.5 L37 22"
         stroke="#22c55e"
         strokeWidth="4"
         strokeLinecap="round"
@@ -573,7 +573,7 @@ export default function ScannerView({
           {isAuthenticTransition && (
             <div className="scanner-authentic-overlay" role="status" aria-label="Authentic Product Verified">
               <div className="authentic-card-shield-wrap">
-                <AuthenticShieldIcon size={52} />
+                <AuthenticCircleCheckIcon size={52} />
               </div>
               <h3 className="authentic-card-title">Authentic Product!</h3>
               <div className="authentic-card-spinner-wrap">
