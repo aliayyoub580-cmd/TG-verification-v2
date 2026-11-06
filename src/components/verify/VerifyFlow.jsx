@@ -103,32 +103,32 @@ export default function VerifyFlow() {
     setFlowState('popup');
   };
 
-/**
- * Helper to extract code parameter if raw scan string is a URL
- */
-function extractVerificationCode(input) {
-  if (!input) return '';
-  let str = String(input).trim();
-  try {
-    if (str.startsWith('http://') || str.startsWith('https://')) {
-      const parsed = new URL(str);
-      const paramCode = parsed.searchParams.get('code');
-      if (paramCode) return paramCode.trim();
-    }
-  } catch (e) {
-    // Ignore URL parse error and fallback to regex
-  }
-
-  const match = str.match(/[?&]code=([^&#\s]+)/i);
-  if (match) {
+  /**
+   * Helper to extract code parameter if raw scan string is a URL
+   */
+  function extractVerificationCode(input) {
+    if (!input) return '';
+    let str = String(input).trim();
     try {
-      return decodeURIComponent(match[1]).trim();
+      if (str.startsWith('http://') || str.startsWith('https://')) {
+        const parsed = new URL(str);
+        const paramCode = parsed.searchParams.get('code');
+        if (paramCode) return paramCode.trim();
+      }
     } catch (e) {
-      return match[1].trim();
+      // Ignore URL parse error and fallback to regex
     }
+
+    const match = str.match(/[?&]code=([^&#\s]+)/i);
+    if (match) {
+      try {
+        return decodeURIComponent(match[1]).trim();
+      } catch (e) {
+        return match[1].trim();
+      }
+    }
+    return str;
   }
-  return str;
-}
 
   // Handler: Code successfully scanned or entered
   const handleScanSuccess = async (rawScannedCode) => {
