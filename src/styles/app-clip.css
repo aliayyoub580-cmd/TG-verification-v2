@@ -1188,11 +1188,11 @@
 }
 
 .scanner-indufar-logo-img {
-  height: 72px;
-  max-width: 170px;
+  height: 86px;
+  max-width: 195px;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+  filter: none;
 }
 
 /* Center AuthNow Shield + Wordmark (Legacy fallback) */
