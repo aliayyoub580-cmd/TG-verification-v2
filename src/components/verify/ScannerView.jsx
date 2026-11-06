@@ -10,6 +10,7 @@ import {
   FiMaximize2,
 } from 'react-icons/fi';
 import CounterfeitModal from './CounterfeitModal.jsx';
+import IosSpinner from './IosSpinner.jsx';
 
 const SCANNER_ELEMENT_ID = 'html5-qrcode-reader';
 
@@ -61,10 +62,43 @@ function TorchIcon({ isOn }) {
   );
 }
 
+/**
+ * Shield Icon with Checkmark matching authentic transition state
+ */
+function AuthenticShieldIcon({ size = 52 }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 56 60"
+      fill="none"
+      style={{ display: 'block', margin: '0 auto' }}
+      aria-hidden="true"
+    >
+      <path
+        d="M28 5 C40 5 48 13 48 27 C48 41 36 51 28 55 C20 51 8 41 8 27 C8 13 16 5 28 5 Z"
+        stroke="#c4cae0"
+        strokeWidth="3.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="rgba(255, 255, 255, 0.05)"
+      />
+      <path
+        d="M20 28 L25.5 35 L36 22"
+        stroke="#22c55e"
+        strokeWidth="4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export default function ScannerView({
   onScanSuccess,
   onCancel: _onCancel,
   isValidating = false,
+  isAuthenticTransition = false,
   isCounterfeitOpen = false,
   onCloseCounterfeit,
 }) {
@@ -535,19 +569,39 @@ export default function ScannerView({
             </div>
           )}
 
-          {/* Central QR Scanning Window: 67% bright area with remaining 33% darkened */}
-          <div className="scanner-scan-window" aria-hidden="true">
-            {/* 4 Green Corner Reticle Brackets framing 67% scanning window */}
-            <span className="reticle-corner top-left" />
-            <span className="reticle-corner top-right" />
-            <span className="reticle-corner bottom-left" />
-            <span className="reticle-corner bottom-right" />
-          </div>
+          {/* Authentic Product Verified 1s Loading Transition Overlay */}
+          {isAuthenticTransition && (
+            <div className="scanner-authentic-overlay" role="status" aria-label="Authentic Product Verified">
+              <div className="authentic-card-shield-wrap">
+                <AuthenticShieldIcon size={52} />
+              </div>
+              <h3 className="authentic-card-title">Authentic Product!</h3>
+              <div className="authentic-card-spinner-wrap">
+                <IosSpinner size={34} color="#ffffff" />
+              </div>
+              <p className="authentic-card-desc">
+                The label of this product<br />was successfully verified
+              </p>
+            </div>
+          )}
 
-          {/* Dark Translucent Horizontal Strip with Centered Bold Green Text */}
-          <div className="scanner-focus-strip" aria-hidden="true">
-            <span className="scanner-focus-text">{currentGuidance.stripText}</span>
-          </div>
+          {/* Central QR Scanning Window: 67% bright area with remaining 33% darkened */}
+          {!isAuthenticTransition && (
+            <>
+              <div className="scanner-scan-window" aria-hidden="true">
+                {/* 4 Green Corner Reticle Brackets framing 67% scanning window */}
+                <span className="reticle-corner top-left" />
+                <span className="reticle-corner top-right" />
+                <span className="reticle-corner bottom-left" />
+                <span className="reticle-corner bottom-right" />
+              </div>
+
+              {/* Dark Translucent Horizontal Strip with Centered Bold Green Text */}
+              <div className="scanner-focus-strip" aria-hidden="true">
+                <span className="scanner-focus-text">{currentGuidance.stripText}</span>
+              </div>
+            </>
+          )}
 
           {/* Bottom-Right Torch / Flashlight FAB Button overlapping viewfinder frame */}
           <button
@@ -557,6 +611,7 @@ export default function ScannerView({
             aria-label="Toggle Flashlight"
             id="torchButton"
             title={torchAvailable ? 'Toggle Flashlight' : 'Flashlight'}
+            disabled={isAuthenticTransition}
           >
             <TorchIcon isOn={torchOn} />
           </button>
@@ -564,7 +619,9 @@ export default function ScannerView({
       </section>
 
       {/* ── White Capsule Progress Bar (Directly below viewfinder, matching Image 3) ── */}
-      <div className="scanner-white-capsule-bar" aria-hidden="true" />
+      {!isAuthenticTransition && (
+        <div className="scanner-white-capsule-bar" aria-hidden="true" />
+      )}
 
       {/* ── Middle Guidance Section (Below Bar) ── */}
       <section className="authnow-guidance-section">
@@ -582,9 +639,11 @@ export default function ScannerView({
         {/* Dynamic Guidance Detail Text (paired with viewfinder strip) */}
         <h2
           className="authnow-guidance-detail-text"
-          onClick={handleCycleGuidance}
+          onClick={!isAuthenticTransition ? handleCycleGuidance : undefined}
         >
-          {isValidating
+          {isAuthenticTransition
+            ? 'Redirecting ...'
+            : isValidating
             ? 'Checking authenticity with registry...'
             : currentGuidance.bottomText}
         </h2>
@@ -594,11 +653,21 @@ export default function ScannerView({
       <footer className="authnow-bottom-bar">
         <button
           type="button"
-          className="authnow-stop-btn"
+          className={`authnow-stop-btn ${isAuthenticTransition ? 'is-redirecting' : ''}`}
           onClick={handleBottomButtonClick}
           id="scanner-stop-button"
+          disabled={isAuthenticTransition}
         >
-          {isPaused ? 'Retry' : 'Stop'}
+          {isAuthenticTransition ? (
+            <span className="stop-btn-loading-wrap">
+              <span className="stop-btn-spinner" />
+              <span>Stop</span>
+            </span>
+          ) : isPaused ? (
+            'Retry'
+          ) : (
+            'Stop'
+          )}
         </button>
       </footer>
 

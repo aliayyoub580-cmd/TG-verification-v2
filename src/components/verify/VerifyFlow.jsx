@@ -31,6 +31,7 @@ export default function VerifyFlow() {
   const [scannedCode, setScannedCode] = useState(urlCode || '');
   const [verificationResult, setVerificationResult] = useState(null);
   const [counterfeitAlertOpen, setCounterfeitAlertOpen] = useState(false);
+  const [isAuthenticTransition, setIsAuthenticTransition] = useState(false);
   const loadingTimerRef = useRef(null);
 
   // Clean up loading timer on unmount
@@ -101,6 +102,7 @@ export default function VerifyFlow() {
 
   // Handler: User cancels / stops scanning
   const handleCancelScanner = () => {
+    setIsAuthenticTransition(false);
     setFlowState('popup');
   };
 
@@ -143,18 +145,22 @@ export default function VerifyFlow() {
       const res = await verifyAPI.verifyPost(cleanCode);
       const data = res.data;
 
-      // Brief delay for smooth animation transition
-      setTimeout(() => {
-        if (data.authentic) {
-          setVerificationResult(data);
-          setIsValidating(false);
-          setFlowState('result');
-        } else {
-          // Code does NOT match in the database -> Show Counterfeit disclaimer popup!
-          setIsValidating(false);
-          setCounterfeitAlertOpen(true);
+      if (data.authentic) {
+        setIsValidating(false);
+        setIsAuthenticTransition(true);
+        if (loadingTimerRef.current) {
+          clearTimeout(loadingTimerRef.current);
         }
-      }, 500);
+        loadingTimerRef.current = setTimeout(() => {
+          setVerificationResult(data);
+          setIsAuthenticTransition(false);
+          setFlowState('result');
+        }, 1000);
+      } else {
+        // Code does NOT match in the database -> Show Counterfeit disclaimer popup!
+        setIsValidating(false);
+        setCounterfeitAlertOpen(true);
+      }
     } catch (err) {
       console.error('Verification error:', err);
       setTimeout(() => {
@@ -170,6 +176,7 @@ export default function VerifyFlow() {
     setScannedCode('');
     setVerificationResult(null);
     setCounterfeitAlertOpen(false);
+    setIsAuthenticTransition(false);
     setFlowState('scanning');
   };
 
@@ -267,6 +274,7 @@ export default function VerifyFlow() {
           onScanSuccess={handleScanSuccess}
           onCancel={handleCancelScanner}
           isValidating={isValidating}
+          isAuthenticTransition={isAuthenticTransition}
           isCounterfeitOpen={counterfeitAlertOpen}
           onCloseCounterfeit={() => setCounterfeitAlertOpen(false)}
         />

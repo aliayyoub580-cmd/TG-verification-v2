@@ -1422,6 +1422,58 @@
   box-shadow: 0 0 16px rgba(250, 204, 21, 0.7);
 }
 
+/* ── Authentic Product Verified Overlay in Viewfinder Frame (1s Redirect Transition) ── */
+.scanner-authentic-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  background: linear-gradient(180deg, #1f275e 0%, #151b47 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 20px;
+  box-sizing: border-box;
+  text-align: center;
+  animation: authNowFadeIn 0.2s ease-out forwards;
+}
+
+.authentic-card-shield-wrap {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authentic-card-title {
+  margin: 0 0 6px 0;
+  font-size: 21px;
+  font-weight: 700;
+  color: #4ade80;
+  letter-spacing: -0.015em;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif;
+  text-align: center;
+}
+
+.authentic-card-spinner-wrap {
+  margin: 4px 0 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authentic-card-desc {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #e2e8f0;
+  line-height: 1.38;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, sans-serif;
+  text-align: center;
+}
+
 /* White Capsule Progress Bar directly below viewfinder (Image 3) */
 .scanner-white-capsule-bar {
   width: calc(100% - 40px);
@@ -1557,6 +1609,42 @@
 .authnow-stop-btn:active {
   transform: scale(0.985);
   background: #2e923b;
+}
+
+/* Disabled grey redirecting state for Stop button (matching Image 1) */
+.authnow-stop-btn.is-redirecting {
+  background: #5b6170 !important;
+  color: #ffffff !important;
+  cursor: default !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+
+.stop-btn-loading-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.stop-btn-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: stopSpinnerRotate 0.8s linear infinite;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+@keyframes stopSpinnerRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Modals & Sheets (Guidance and Menu) ────────────────────────────────── */
