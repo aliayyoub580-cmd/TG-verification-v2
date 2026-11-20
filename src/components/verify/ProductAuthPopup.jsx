@@ -146,54 +146,49 @@ export default function ProductAuthPopup({
                 onClick={onOpenScanner}
                 id="appclip-open-button"
               >
-                Open
+                Abrir
               </button>
-              {!isStandalone && (
-                <button
-                  type="button"
-                  className="popup-install-btn"
-                  onClick={handleInstall}
-                  id="appclip-install-button"
-                  title="Install application to your home screen"
-                >
-                  <FiDownload style={{ fontSize: '11px', marginRight: '3px' }} />
-                  Install application
-                </button>
-              )}
             </div>
           </div>
 
           {/* Divider */}
           <div className="popup-divider" />
 
-          {/* Bottom Footer Row: Provided by AuthNow + App Icon + 4+ + App Store + Chevron */}
+          {/* Bottom Footer Row: Fornecido por AuthNow – Product Verification [L] + App Store > */}
           <div className="popup-footer-row">
             <div className="popup-footer-left">
-              {/* App Clip Icon using Untitled design.png */}
+              {/* App Clip Icon using authnow-app-icon.png */}
               <div className="popup-appclip-icon-wrap">
                 <img
-                  src="/Untitled%20design.png"
+                  src="/authnow-app-icon.png"
                   alt="AuthNow"
                   className="popup-footer-app-icon"
                 />
               </div>
 
               <div className="popup-footer-text-col">
-                <span className="popup-provided-by">Provided by:</span>
-                <span className="popup-provider-name">AuthNow – Prod...</span>
+                <span className="popup-provided-by">Fornecido por</span>
+                <span className="popup-provider-name">
+                  AuthNow – Product Verification
+                  <span className="popup-rating-l-badge">L</span>
+                </span>
               </div>
             </div>
 
             <div className="popup-footer-right">
-              <span className="popup-age-badge">4+</span>
-              <div className="popup-appstore-badge">
+              <a
+                href="https://apps.apple.com/pk/app/authnow-product-verification/id6745412484"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="popup-appstore-link"
+                title="App Store - AuthNow Product Verification"
+              >
                 <img
-                  src="/icon_appstore__ev0z770zyxoy_large_2x.png"
+                  src="/app-store-badge.png"
                   alt="App Store"
-                  className="popup-appstore-icon-img"
+                  className="popup-appstore-badge-img"
                 />
-              </div>
-              <FiChevronRight className="popup-chevron-icon" />
+              </a>
             </div>
           </div>
         </div>

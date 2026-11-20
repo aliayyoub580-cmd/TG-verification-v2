@@ -1647,6 +1647,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -1701,6 +1702,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -1726,6 +1728,7 @@
     opacity: 0;
     transform: scale(0.94);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -2146,14 +2149,14 @@
    ========================================================================== */
 
 .popup-clip-sheet {
-  width: 100%;
-  max-width: 440px;
-  background: #ffffff;
-  border-radius: 28px 28px 0 0 !important;
-  box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.45);
+  width: calc(100% - 10px);
+  max-width: 420px;
+  background: linear-gradient(180deg, #44372c 0%, #463b32 20%, #483f36 40%, #4b433a 60%, #4e463d 85%, #4e463d 100%);
+  border-radius: 50px !important;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   padding: 0;
-  margin: 0 auto;
+  margin: 0 auto calc(6px + env(safe-area-inset-bottom, 0px)) auto;
 }
 
 /* Hero Banner Container with PopUp/Image.jpg */
@@ -2162,6 +2165,7 @@
   width: 100%;
   line-height: 0;
   overflow: hidden;
+  border-radius: 28px 28px 20px 20px;
 }
 
 .popup-hero-banner-img {
@@ -2169,7 +2173,7 @@
   height: auto;
   display: block;
   object-fit: cover;
-  border-radius: 28px 28px 0 0;
+  border-radius: 28px 28px 20px 20px;
 }
 
 /* Floating Round White Close (X) Button matching Screenshot.PNG */
@@ -2221,9 +2225,9 @@
 
 .popup-title {
   margin: 0;
-  font-size: clamp(19px, 5.2vw, 24px);
+  font-size: clamp(17px, 4.6vw, 20px);
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
@@ -2233,9 +2237,9 @@
 }
 
 .popup-subtitle {
-  margin: 3px 0 0 0;
-  font-size: clamp(13.5px, 3.8vw, 16px);
-  color: #4b5563;
+  margin: 2px 0 0 0;
+  font-size: clamp(11.5px, 3.2vw, 13.5px);
+  color: rgba(255, 255, 255, 0.72);
   font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
@@ -2255,12 +2259,12 @@
 
 /* Vibrant iOS Blue Pill Open Button */
 .popup-open-btn {
-  background: #007aff;
+  background: #0091fe;
   color: #ffffff;
   border: none;
-  padding: 8px 24px;
+  padding: 8px 26px;
   border-radius: 9999px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
   cursor: pointer;
@@ -2270,12 +2274,12 @@
 }
 
 .popup-open-btn:hover {
-  background: #006ee6;
+  background: #0082e6;
 }
 
 .popup-open-btn:active {
   transform: scale(0.96);
-  background: #005ecb;
+  background: #0073cc;
 }
 
 /* Install application button */
@@ -2340,30 +2344,32 @@
 /* Divider Line */
 .popup-divider {
   height: 1px;
-  background: #e5e7eb;
-  margin: 16px 20px 12px 20px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 16px 20px 14px 20px;
 }
 
 /* Bottom App Store Footer Row */
 .popup-footer-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  padding: 0 20px calc(18px + env(safe-area-inset-bottom, 0px)) 20px;
+  padding: 0 16px calc(20px + env(safe-area-inset-bottom, 0px)) 16px;
   box-sizing: border-box;
 }
 
 .popup-footer-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
 }
 
 /* App Clip Icon Container with Decorative Brackets */
 .popup-appclip-icon-wrap {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2371,10 +2377,11 @@
 }
 
 .popup-footer-app-icon {
-  width: 44px;
-  height: 44px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   display: block;
+  border-radius: 7px;
 }
 
 .popup-footer-text-col {
@@ -2382,63 +2389,72 @@
   flex-direction: column;
   text-align: left;
   gap: 1px;
+  min-width: 0;
 }
 
 .popup-provided-by {
-  font-size: 16px;
-  color: #6b7280;
-  font-weight: 600;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 400;
   line-height: 1.15;
   margin: 0;
+  white-space: nowrap;
 }
 
 .popup-provider-name {
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #ffffff;
   letter-spacing: -0.01em;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   white-space: nowrap;
   line-height: 1.15;
   margin: 0;
 }
 
+.popup-rating-l-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  background: #10b981;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 2.5px;
+  line-height: 1;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
 .popup-footer-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-left: 20px;
+  padding-bottom: 2px;
 }
 
-.popup-age-badge {
-  font-size: 11px;
-  font-weight: 600;
-  color: #6b7280;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  padding: 1px 5px;
-  line-height: 1.2;
-}
-
-.popup-appstore-badge {
-  display: flex;
+.popup-appstore-link {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.68;
+  transition: opacity 0.15s ease;
 }
 
-.popup-appstore-icon-img {
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
-  object-fit: cover;
+.popup-appstore-badge-img {
+  height: 13.5px;
+  width: auto;
   display: block;
-}
-
-.popup-chevron-icon {
-  font-size: 19px;
-  color: #9ca3af;
-  margin-left: 2px;
+  object-fit: contain;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -2493,6 +2509,7 @@
     opacity: 0;
     transform: scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -2682,6 +2699,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
